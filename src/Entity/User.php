@@ -7,6 +7,7 @@ use App\Repository\UserRepository;
 use App\Controller\RegistrationController;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Doctrine\DataUserOwnedInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -28,8 +29,15 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
             'denormalization_context' => ['groups' => 'User:Registration']
         ]
     ],
+    itemOperations: [
+        'get' => [
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ],
+        ]
+    ]
 )]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUserOwnedInterface
 {
     /**
      * @ORM\Id
@@ -72,6 +80,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->id;
     }
+
 
     public function getEmail(): ?string
     {

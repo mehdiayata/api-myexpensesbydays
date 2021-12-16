@@ -8,7 +8,6 @@ use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 
 class LoginTest extends ApiTestCase
 {
-
     /**
      * @var \Doctrine\ORM\EntityManager
      */
@@ -17,14 +16,10 @@ class LoginTest extends ApiTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
 
-
-
     use RefreshDatabaseTrait;
-
 
     public function testToken()
     {
@@ -47,10 +42,10 @@ class LoginTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $this->assertArrayHasKey('token', $json);
     }
-    
 
-    public function createUser($client) {
 
+    public function createUser($client)
+    {
         // Création d'un nouvelle utilisateur
         $user = new User();
         $user->setEmail('test3@test.fr');
