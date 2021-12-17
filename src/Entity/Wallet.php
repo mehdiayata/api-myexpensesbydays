@@ -2,16 +2,49 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\WalletRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\WalletRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=WalletRepository::class)
  */
-#[ApiResource]
+
+#[ApiResource(
+    denormalizationContext: ['groups' => 'write:Wallet'],
+    normalizationContext: ['groups' => 'read:Wallet'],
+    collectionOperations: [
+        'get' => [
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ]
+        ],
+        'post' => [
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ],
+        ],
+    ],
+    itemOperations: [
+        'get',
+        'put' => [
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ],
+        ],
+        'delete' => [
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ]
+        ]
+    ]
+
+)]
 class Wallet
 {
     /**
@@ -19,11 +52,13 @@ class Wallet
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
+    #[Groups(['read:Wallet'])]
     private $id;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      */
+    #[Groups(['read:Wallet'])]
     private $amount;
 
     /**
@@ -35,16 +70,19 @@ class Wallet
     /**
      * @ORM\OneToMany(targetEntity=Transaction::class, mappedBy="wallet", orphanRemoval=true)
      */
+    #[ApiSubresource]
     private $transactions;
 
     /**
      * @ORM\Column(type="datetime")
      */
+    #[Groups(['read:Wallet'])]
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
+    #[Groups(['read:Wallet'])]
     private $editAt;
 
     public function __construct()

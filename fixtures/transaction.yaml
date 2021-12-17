@@ -1,5 +1,5 @@
 App\Entity\Transaction:
     transaction_{1..10}:
         amount: '<randomFloat(2, 0, 3000)>'
-        createdAt: <dateTimeBetween('-1 years', 'now')>
+        createdAt: <dateTimeBetween('15-12-2021', '17-12-2021')>
         wallet: '@wallet_*'

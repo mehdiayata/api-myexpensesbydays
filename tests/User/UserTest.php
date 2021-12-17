@@ -38,24 +38,24 @@ class UserTest extends ApiTestCase
             ],
         ];
 
-        $client->request('GET', '/api/users/5', $header);
+        $client->request('GET', '/api/users/4', $header);
         
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         $this->assertJsonEquals([
             '@context' => '/api/contexts/User',
-            '@id' => '/api/users/5',
+            '@id' => '/api/users/4',
             '@type' => 'User',
-            'id' => '5',
-            'email' => 'test3@test.fr',
+            'id' => '4',
+            'email' => 'test@test.fr',
             'roles' => ['0' => 'ROLE_USER']
         ]);
 
     }
 
 
-    public function createUser($client)
+    public function createUser()
     {
         // Création d'un nouvelle utilisateur
         $user = new User();
@@ -72,7 +72,7 @@ class UserTest extends ApiTestCase
         $response = $client->request('POST', '/api/login', [
             'headers' => ['Content-Type' => 'application/json'],
             'json' => [
-                'username' => 'test3@test.fr',
+                'username' => 'test@test.fr',
                 'password' => 'azerty13'
             ],
         ]);
