@@ -43,6 +43,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'openapi_context' =>  [
                 'security' => [['bearerAuth' => []]]
             ]
+        ],
+        'wallet_transactions' => [
+            'pagination_enabled' => true,
+            'path' => '/wallets/{id}/transactions',
+            'method' => 'get',
+            'read' => true,
+            'normalization_context' => ['groups' => 'read:Wallet:Transaction'],
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ]
         ]
     ]
 )]
@@ -59,7 +69,7 @@ class Wallet implements UserOwnedInterface
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      */
-    #[Groups(['read:Wallet', 'write:Wallet', 'put:Wallet'])]
+    #[Groups(['read:Wallet', 'write:Wallet', 'put:Wallet', 'read:Wallet:Transaction'])]
     private $amount;
 
     /**
@@ -71,18 +81,20 @@ class Wallet implements UserOwnedInterface
     /**
      * @ORM\OneToMany(targetEntity=Transaction::class, mappedBy="wallet", orphanRemoval=true)
      */
+    
+    #[Groups(['read:Wallet:Transaction'])]
     private $transactions;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    #[Groups(['read:Wallet', 'write:Wallet'])]
+    #[Groups(['read:Wallet', 'write:Wallet', 'read:Wallet:Transaction'])]
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    #[Groups(['read:Wallet', 'put:Wallet'])]
+    #[Groups(['read:Wallet', 'put:Wallet', 'read:Wallet:Transaction'])]
     private $editAt;
 
     public function __construct()

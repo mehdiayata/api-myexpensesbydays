@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\TransactionRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=TransactionRepository::class)
@@ -17,11 +18,13 @@ class Transaction
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
+    #[Groups(['read:Wallet:Transaction'])]
     private $id;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      */
+    #[Groups(['read:Wallet:Transaction'])]
     private $amount;
 
     /**
@@ -33,11 +36,13 @@ class Transaction
     /**
      * @ORM\Column(type="datetime")
      */
+    #[Groups(['read:Wallet:Transaction'])]
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
+    #[Groups(['read:Wallet:Transaction'])]
     private $editAt;
 
     public function getId(): ?int

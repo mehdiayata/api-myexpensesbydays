@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 class DateFormatService{
 
-
+    // Format la date en JSON
     public function formatDate($date) {
         
         $date = new DateTime($date);
@@ -20,6 +20,8 @@ class DateFormatService{
         $normalizer = array(new DateTimeNormalizer(), new ObjectNormalizer());
         $serializer = new Serializer($normalizer, $encoders);
         $date = $serializer->serialize($date, 'json');
+
+        // Retire les quote en trop.
         $date = str_replace('"', "", $date);
 
         return $date;   
