@@ -31,5 +31,9 @@ services:
         public: true
         tags: ['hautelook_alice.faker.provider']
 
+    App\Serializer\UserOwnedDenormalizer:
+        tags:
+            - { name: serializer.normalizer}    
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

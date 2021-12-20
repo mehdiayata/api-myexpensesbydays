@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 class WalletTest extends ApiTestCase
 {
     use RefreshDatabaseTrait;
-    
 
     /**
      * @var \Doctrine\ORM\EntityManager
@@ -26,6 +25,7 @@ class WalletTest extends ApiTestCase
     private $header;
     private $client;
     private $dateFormatService;
+    private $header2;
 
     protected function setUp(): void
     {
@@ -46,13 +46,17 @@ class WalletTest extends ApiTestCase
                 'Content-Type' => 'application/json',
             ],
         ];
+
+        $this->header2 = [            
+            'Authorization' => 'Bearer ' . $token,
+            'Content-Type' => 'application/json',
+        ];
     }
 
 
     public function testGetWallets()
     {
-        $this->client->request('GET', '/api/wallets', $this->header);
-
+        $test = $this->client->request('GET', '/api/wallets', $this->header);
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
@@ -81,4 +85,52 @@ class WalletTest extends ApiTestCase
             "hydra:totalItems" => 2
         ]);
     }
+
+    public function testGetWallet() {
+        $this->client->request('GET', '/api/wallets/2', $this->header);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+
+        $this->assertJsonContains(
+            [
+                "@context" => "/api/contexts/Wallet", 
+                "@id" => "/api/wallets/2", 
+                "@type" => "Wallet", 
+                "id" => 2, 
+                "amount" => "723121.24", 
+                "createdAt" => $this->dateFormatService->formatDate('2021-12-16 20:45:46'), 
+                "editAt" => null
+             ]); 
+     }
+
+    public function testPostWallet() {
+        $json = [
+            "amount" => "355.55", 
+            "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46')
+            ];
+
+
+        $this->client->request('POST', '/api/wallets', ['headers' => $this->header2, 'json' => $json]);
+
+
+        $this->assertResponseStatusCodeSame(201);
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+
+        $this->assertJsonEquals([
+            '@context' => '/api/contexts/Wallet',
+            '@id' => "/api/wallets/3",
+            '@type' => 'Wallet',
+            'id' => 3,
+            "amount" => "355.55",
+            "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46'),
+            "editAt" => null
+        ]);
+
+        $this->assertMatchesResourceItemJsonSchema(Wallet::class);
+
+        // Vérifier que les data sont bien présent
+    }
+
+    
 }

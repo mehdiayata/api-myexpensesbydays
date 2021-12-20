@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use App\Doctrine\UserOwnedInterface;
 use App\Repository\WalletRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -45,7 +46,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ]
 
 )]
-class Wallet
+class Wallet implements UserOwnedInterface
 {
     /**
      * @ORM\Id
@@ -58,7 +59,7 @@ class Wallet
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      */
-    #[Groups(['read:Wallet'])]
+    #[Groups(['read:Wallet', 'write:Wallet'])]
     private $amount;
 
     /**
@@ -76,7 +77,7 @@ class Wallet
     /**
      * @ORM\Column(type="datetime")
      */
-    #[Groups(['read:Wallet'])]
+    #[Groups(['read:Wallet', 'write:Wallet'])]
     private $createdAt;
 
     /**
