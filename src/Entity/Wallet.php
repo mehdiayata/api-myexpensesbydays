@@ -37,6 +37,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'openapi_context' =>  [
                 'security' => [['bearerAuth' => []]]
             ],
+            'denormalization_context' => ['groups' => 'put:Wallet']
         ],
         'delete' => [
             'openapi_context' =>  [
@@ -44,7 +45,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
             ]
         ]
     ]
-
 )]
 class Wallet implements UserOwnedInterface
 {
@@ -59,7 +59,7 @@ class Wallet implements UserOwnedInterface
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      */
-    #[Groups(['read:Wallet', 'write:Wallet'])]
+    #[Groups(['read:Wallet', 'write:Wallet', 'put:Wallet'])]
     private $amount;
 
     /**
@@ -71,7 +71,6 @@ class Wallet implements UserOwnedInterface
     /**
      * @ORM\OneToMany(targetEntity=Transaction::class, mappedBy="wallet", orphanRemoval=true)
      */
-    #[ApiSubresource]
     private $transactions;
 
     /**
@@ -83,7 +82,7 @@ class Wallet implements UserOwnedInterface
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    #[Groups(['read:Wallet'])]
+    #[Groups(['read:Wallet', 'put:Wallet'])]
     private $editAt;
 
     public function __construct()

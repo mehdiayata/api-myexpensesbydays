@@ -132,5 +132,42 @@ class WalletTest extends ApiTestCase
         // Vérifier que les data sont bien présent
     }
 
+    public function testPutWallet() {
+        $json = [
+            "amount" => "100.55", 
+            "editAt" => $this->dateFormatService->formatDate('2023-01-15 01:02:46')
+            ];
+
+        $this->client->request('PUT', '/api/wallets/2', ['headers' => $this->header2, 'json' => $json]);
+
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+
+        $this->assertJsonEquals([
+            '@context' => '/api/contexts/Wallet',
+            '@id' => "/api/wallets/2",
+            '@type' => 'Wallet',
+            'id' => 2,
+            "amount" => "100.55",
+            "createdAt" => $this->dateFormatService->formatDate('2021-12-16 20:45:46'),
+            'editAt' => $this->dateFormatService->formatDate('2023-01-15 01:02:46')
+        ]);
+
+        $this->assertMatchesResourceItemJsonSchema(Wallet::class);
+    }
+
+    public function testDeleteWallet() {
+        
+        $this->client->request('DELETE', '/api/wallets/2', ['headers' => $this->header2]);
+
+        $this->assertResponseStatusCodeSame(204);
+
+        $this->assertNull(
+            static::getContainer()->get('doctrine')->getRepository(Wallet::class)->findOneBy(['id' => '2'])
+        );
+    
+    }
+
     
 }
