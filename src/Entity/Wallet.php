@@ -32,7 +32,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ],
     ],
     itemOperations: [
-        'get',
+        'get' => [
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ],
+        ],
         'put' => [
             'openapi_context' =>  [
                 'security' => [['bearerAuth' => []]]
