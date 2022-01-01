@@ -23,7 +23,7 @@ use App\Doctrine\Transaction\TransactionUserOwnedInterface;
         'post' => [
             'openapi_context' =>  [
                 'security' => [['bearerAuth' => []]]
-            ],
+            ]
         ]
     ], 
     itemOperations: [
@@ -36,6 +36,7 @@ use App\Doctrine\Transaction\TransactionUserOwnedInterface;
             'openapi_context' =>  [
                 'security' => [['bearerAuth' => []]]
             ],
+            'denormalization_context' => ['groups' => 'put:Transaction']
         ],
         'delete' => [
             'openapi_context' =>  [
@@ -58,7 +59,7 @@ class Transaction implements TransactionUserOwnedInterface
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      */
-    #[Groups(['read:Transaction', 'read:Wallet:Transaction'])]
+    #[Groups(['read:Transaction', 'write:Transaction', 'put:Transaction', 'read:Wallet:Transaction'])]
     private $amount;
 
     /**
@@ -71,13 +72,13 @@ class Transaction implements TransactionUserOwnedInterface
     /**
      * @ORM\Column(type="datetime")
      */
-    #[Groups(['read:Transaction', 'read:Wallet:Transaction'])]
+    #[Groups(['read:Transaction', 'write:Transaction', 'read:Wallet:Transaction'])]
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    #[Groups(['read:Transaction', 'read:Wallet:Transaction'])]
+    #[Groups(['read:Transaction', 'put:Transaction', 'read:Wallet:Transaction'])]
     private $editAt;
 
     public function getId(): ?int

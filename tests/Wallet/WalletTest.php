@@ -3,11 +3,12 @@
 namespace App\Tests\Wallet;
 
 use App\Entity\Wallet;
+use App\Entity\Transaction;
 use App\Tests\LoginTestClass;
+use App\Service\DateFormatService;
+use App\Repository\WalletRepository;
 use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
-use App\Repository\WalletRepository;
-use App\Service\DateFormatService;
 
 class WalletTest extends ApiTestCase
 {
@@ -19,6 +20,7 @@ class WalletTest extends ApiTestCase
     private $dateFormatService;
     private $client;
     private $header;
+    private $walletRepository;
 
     // Méthode appelé avant chaque test
     protected function setUp(): void
@@ -34,6 +36,7 @@ class WalletTest extends ApiTestCase
             'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
         ];
+
 
     }
 
@@ -100,6 +103,10 @@ class WalletTest extends ApiTestCase
         ];
 
 
+
+        // Récupère le nombre d'enregistrement
+        $nbWallets =  count(static::getContainer()->get('doctrine')->getRepository(Wallet::class)->findAll());
+
         $this->client->request('POST', '/api/wallets', ['headers' => $this->header, 'json' => $json]);
 
 
@@ -108,9 +115,9 @@ class WalletTest extends ApiTestCase
 
         $this->assertJsonEquals([
             '@context' => '/api/contexts/Wallet',
-            '@id' => "/api/wallets/3",
+            '@id' => "/api/wallets/".$nbWallets+1,
             '@type' => 'Wallet',
-            'id' => 3,
+            'id' => $nbWallets+1,
             "amount" => "355.55",
             "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46'),
             "editAt" => null
@@ -160,52 +167,11 @@ class WalletTest extends ApiTestCase
 
     public function testGetWalletTransactions()
     {
-
-        $this->client->request('GET', '/api/wallets/1/transactions', ['headers' => $this->header]);
-
+        $wallet = $this->client->request('GET', '/api/wallets/1/transactions', ['headers' => $this->header]);
+  
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertJsonContains( [
-            "@context" => "/api/contexts/Wallet", 
-            "@id" => "/api/wallets/1", 
-            "@type" => "Wallet", 
-            "amount" => "583644.70", 
-            "transactions" => [
-                  [
-                     "@id" => "/api/transactions/1", 
-                     "@type" => "Transaction", 
-                     "id" => 1, 
-                     "amount" => "1257.58", 
-                     'createdAt' => '2021-12-15T15:02:13+00:00', 
-                     "editAt" => null 
-                  ], 
-                  [
-                        "@id" => "/api/transactions/5", 
-                        "@type" => "Transaction", 
-                        "id" => 5, 
-                        "amount" => "1251.91", 
-                        'createdAt' => '2021-12-16T02:10:38+00:00',
-                        "editAt" => null 
-                     ], 
-                  [
-                           "@id" => "/api/transactions/7", 
-                           "@type" => "Transaction", 
-                           "id" => 7, 
-                           "amount" => "2392.14", 
-                           'createdAt' => '2021-12-15T10:50:32+00:00',
-                           "editAt" => null 
-                        ], 
-                  [
-                              "@id" => "/api/transactions/8", 
-                              "@type" => "Transaction", 
-                              "id" => 8, 
-                              "amount" => "2147.91", 
-                              'createdAt' => '2021-12-16T22:28:36+00:00',
-                              "editAt" => null 
-                           ] 
-               ], 
-            'createdAt' => '2021-12-15T00:20:24+00:00',
-            "editAt" => null 
-         ]);
+        $this->assertJsonEquals($wallet->getContent());
+
     }
 }

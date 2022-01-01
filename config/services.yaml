@@ -33,6 +33,10 @@ services:
 
     App\Serializer\UserOwnedDenormalizer:
         tags:
+            - { name: serializer.normalizer}
+    
+    App\Serializer\TransactionWalletDenormalizer:
+        tags:
             - { name: serializer.normalizer}    
 
     # add more service definitions when explicit configuration is needed

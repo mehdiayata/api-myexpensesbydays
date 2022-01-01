@@ -4,4 +4,10 @@ App\Entity\Wallet:
         createdAt: <dateTimeBetween('15-12-2021', '17-12-2021')>
         owner: '@user_4'
 
+    wallet_{3..5}:
+        amount: '<randomFloat(2, 10000, 1000000)>'
+        createdAt: <dateTimeBetween('15-12-2021', '17-12-2021')>
+        owner: '@user_1'
+        
+
 
