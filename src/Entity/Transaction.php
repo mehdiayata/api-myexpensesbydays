@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\TransactionRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\TransactionDeleteController;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Doctrine\Transaction\TransactionUserOwnedInterface;
 
@@ -42,6 +43,12 @@ use App\Doctrine\Transaction\TransactionUserOwnedInterface;
             'openapi_context' =>  [
                 'security' => [['bearerAuth' => []]]
             ],
+            'pagination_enabled' => false,
+            'path' => '/transactions/{id}',
+            'method' => 'delete',
+            'controller' => TransactionDeleteController::class,
+            'read' => true
+            
         ],
         
     ]

@@ -5,7 +5,10 @@
 namespace App\Serializer;
 
 use App\Doctrine\Transaction\TransactionUserOwnedInterface;
+use App\Repository\TransactionRepository;
 use App\Repository\WalletRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Normalizer\DenormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\DenormalizerAwareInterface;
@@ -17,7 +20,7 @@ class TransactionWalletDenormalizer implements ContextAwareDenormalizerInterface
 
     private const ALREADY_CALLED_DENORMALIZER = 'TransactionWalletDenormalizer';
 
-    public function __construct(private Security $security, private WalletRepository $walletRepository)
+    public function __construct(private Security $security, private WalletRepository $walletRepository, private EntityManagerInterface $em, private TransactionRepository $transactionRepository)
     {
         
     }
@@ -45,7 +48,33 @@ class TransactionWalletDenormalizer implements ContextAwareDenormalizerInterface
 
         $obj->setWallet($currentWallet);
         
+        $this->editAmountWallet($obj, $context);
+
         return $obj;
 
+    }
+
+    public function editAmountWallet($obj, $context) {
+
+        if(isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post') {
+            $wallet = $obj->getWallet();
+            $result = $wallet->getAmount() + $obj->getAmount();
+            $wallet->setAmount($result);
+
+        } 
+        
+        if(isset($context['item_operation_name']) && $context['item_operation_name'] == 'put') {
+            // Récupère la somme de la transaciton à modifier (avant que cette dernière ne soit modifier)
+            $amountOldTransaction = $this->transactionRepository->find($obj->getId())->getAmount();
+            $wallet = $obj->getWallet();
+            $result = $wallet->getAmount() - $amountOldTransaction;
+            $result = $wallet->getAmount() + $obj->getAmount();
+            $wallet->setAmount($result);
+
+        } 
+        
+
+        $this->em->persist($wallet);
+        $this->em->flush();
     }
 }

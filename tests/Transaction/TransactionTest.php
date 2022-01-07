@@ -67,7 +67,7 @@ class TransactionTest extends ApiTestCase
         $this->assertMatchesResourceItemJsonSchema(Transaction::class);
     }
 
-    public function testPutWallet()
+    public function testPutTransaction()
     {
         $json = [
             "amount" => "210.00",
@@ -95,7 +95,7 @@ class TransactionTest extends ApiTestCase
         $this->assertMatchesResourceItemJsonSchema(Transaction::class);
     }
 
-    public function testDeleteWallet()
+    public function testDeleteTransaction()
     {
 
         $this->client->request('DELETE', '/api/transactions/2', ['headers' => $this->header]);
