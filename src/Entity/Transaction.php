@@ -24,7 +24,8 @@ use App\Doctrine\Transaction\TransactionUserOwnedInterface;
         'post' => [
             'openapi_context' =>  [
                 'security' => [['bearerAuth' => []]]
-            ]
+            ],
+        'denormalization_context' => ['groups' => 'post:Transaction']
         ]
     ], 
     itemOperations: [
@@ -66,20 +67,20 @@ class Transaction implements TransactionUserOwnedInterface
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      */
-    #[Groups(['read:Transaction', 'write:Transaction', 'put:Transaction', 'read:Wallet:Transaction'])]
+    #[Groups(['read:Transaction', 'write:Transaction', 'put:Transaction', 'post:Transaction', 'read:Wallet:Transaction'])]
     private $amount;
 
     /**
      * @ORM\ManyToOne(targetEntity=Wallet::class, inversedBy="transactions")
      * @ORM\JoinColumn(nullable=false)
      */
-    #[Groups(['read:Transaction'])]
+    #[Groups(['read:Transaction', 'post:Transaction'])]
     private $wallet;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    #[Groups(['read:Transaction', 'write:Transaction', 'read:Wallet:Transaction'])]
+    #[Groups(['read:Transaction', 'write:Transaction', 'post:Transaction', 'read:Wallet:Transaction'])]
     private $createdAt;
 
     /**

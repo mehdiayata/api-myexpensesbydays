@@ -42,7 +42,8 @@ class TransactionWalletTest extends ApiTestCase
 
         $json = [
             "amount" => "$amount",
-            "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46')
+            "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46'),
+            "wallet" => "api/wallets/1"
         ];
 
         // Récupère le nombre d'enregistrement
@@ -87,7 +88,8 @@ class TransactionWalletTest extends ApiTestCase
 
         $json = [
             "amount" => "$amount",
-            "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46')
+            "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46'),
+            "wallet" => "api/wallets/1"
         ];
 
         // Récupère le nombre d'enregistrement

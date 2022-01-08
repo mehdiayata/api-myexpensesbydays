@@ -39,14 +39,14 @@ class TransactionWalletDenormalizer implements ContextAwareDenormalizerInterface
         $obj = $this->denormalizer->denormalize($data, $type, $format, $context); 
 
         
-        $wallets = $this->walletRepository->findBy([
-            'owner' => $this->security->getUser()
-        ]);
+        // $wallets = $this->walletRepository->findBy([
+        //     'owner' => $this->security->getUser()
+        // ]);
         
-        // Simulation d'un wallet courant, sélectionnez par l'user (il faudra le mettre dans le jwt)
-        $currentWallet = $wallets[0]; 
+        // // Simulation d'un wallet courant, sélectionnez par l'user (il faudra le mettre dans le jwt)
+        // $currentWallet = $wallets[0]; 
 
-        $obj->setWallet($currentWallet);
+        // $obj->setWallet($currentWallet);
         
         $this->editAmountWallet($obj, $context);
 
