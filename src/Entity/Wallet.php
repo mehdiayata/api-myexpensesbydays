@@ -6,9 +6,10 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use App\Doctrine\UserOwnedInterface;
 use App\Repository\WalletRepository;
+use App\Controller\MainWalletController;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
+use App\Controller\GetMainWalletController;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -29,6 +30,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'openapi_context' =>  [
                 'security' => [['bearerAuth' => []]]
             ],
+        ],
+        'wallet_get_main' => [
+            'pagination_enabled' => false,
+            'path' => '/wallets/main',
+            'method' => 'get',
+            'read' => true,
+            'controller' => GetMainWalletController::class,
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ]
         ],
     ],
     itemOperations: [
@@ -57,7 +68,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'openapi_context' =>  [
                 'security' => [['bearerAuth' => []]]
             ]
-        ]
+        ],
+        'wallet_main' => [
+            'pagination_enabled' => false,
+            'path' => '/wallets/{id}/main',
+            'method' => 'put',
+            'read' => true,
+            'denormalization_context' => ['groups' => 'put:Wallet:main'],
+            'controller' => MainWalletController::class,
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ]
+        ],
+
     ]
 )]
 class Wallet implements UserOwnedInterface
@@ -85,7 +108,7 @@ class Wallet implements UserOwnedInterface
     /**
      * @ORM\OneToMany(targetEntity=Transaction::class, mappedBy="wallet", orphanRemoval=true)
      */
-    
+
     #[Groups(['read:Wallet:Transaction'])]
     private $transactions;
 
@@ -100,6 +123,12 @@ class Wallet implements UserOwnedInterface
      */
     #[Groups(['read:Wallet', 'put:Wallet', 'read:Wallet:Transaction'])]
     private $editAt;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    #[Groups(['read:Wallet'])]
+    private $main = 0;
 
     public function __construct()
     {
@@ -185,6 +214,18 @@ class Wallet implements UserOwnedInterface
     public function setEditAt(?\DateTimeInterface $editAt): self
     {
         $this->editAt = $editAt;
+
+        return $this;
+    }
+
+    public function getMain(): ?bool
+    {
+        return $this->main;
+    }
+
+    public function setMain(bool $main): self
+    {
+        $this->main = $main;
 
         return $this;
     }

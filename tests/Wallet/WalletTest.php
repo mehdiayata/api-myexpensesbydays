@@ -43,56 +43,25 @@ class WalletTest extends ApiTestCase
 
     public function testGetWallets()
     {
-        $this->client->request('GET', '/api/wallets', ['headers' => $this->header]);
+        $wallets = $this->client->request('GET', '/api/wallets', ['headers' => $this->header]);
+        $wallets = json_decode($wallets->getContent(), true);
         
         // Si la réponse est OK
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
-        $this->assertJsonContains([
-            "@context" => "/api/contexts/Wallet",
-            "@id" => "/api/wallets",
-            "@type" => "hydra:Collection",
-            "hydra:member" => [
-                [
-                    "@id" => "/api/wallets/1",
-                    "@type" => "Wallet",
-                    "id" => 1,
-                    "amount" => "583644.70",
-                    'createdAt' => $this->dateFormatService->formatDate('2021-12-15 00:20:24'),
-                    "editAt" => null
-                ],
-                [
-                    "@id" => "/api/wallets/2",
-                    "@type" => "Wallet",
-                    "id" => 2,
-                    "amount" => "723121.24",
-                    'createdAt' => $this->dateFormatService->formatDate('2021-12-16 20:45:46'),
-                    "editAt" => null
-                ]
-            ],
-            "hydra:totalItems" => 2
-        ]);
+        $this->assertJsonContains($wallets);
     }
 
     public function testGetWallet()
     {
-        $this->client->request('GET', '/api/wallets/2', ['headers' => $this->header]);
-
+        $wallet = $this->client->request('GET', '/api/wallets/2', ['headers' => $this->header]);
+        $wallet = json_decode($wallet->getContent(), true);
+        
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
-        $this->assertJsonContains(
-            [
-                "@context" => "/api/contexts/Wallet",
-                "@id" => "/api/wallets/2",
-                "@type" => "Wallet",
-                "id" => 2,
-                "amount" => "723121.24",
-                "createdAt" => $this->dateFormatService->formatDate('2021-12-16 20:45:46'),
-                "editAt" => null
-            ]
-        );
+        $this->assertJsonContains($wallet);
     }
 
     public function testPostWallet()
@@ -102,26 +71,16 @@ class WalletTest extends ApiTestCase
             "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46')
         ];
 
-
-
         // Récupère le nombre d'enregistrement
         $nbWallets =  count(static::getContainer()->get('doctrine')->getRepository(Wallet::class)->findAll());
 
-        $this->client->request('POST', '/api/wallets', ['headers' => $this->header, 'json' => $json]);
-
+        $wallet = $this->client->request('POST', '/api/wallets', ['headers' => $this->header, 'json' => $json]);
+        $wallet = json_decode($wallet->getContent(), true);
 
         $this->assertResponseStatusCodeSame(201);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
-        $this->assertJsonEquals([
-            '@context' => '/api/contexts/Wallet',
-            '@id' => "/api/wallets/".$nbWallets+1,
-            '@type' => 'Wallet',
-            'id' => $nbWallets+1,
-            "amount" => "355.55",
-            "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46'),
-            "editAt" => null
-        ]);
+        $this->assertJsonEquals($wallet);
 
         $this->assertMatchesResourceItemJsonSchema(Wallet::class);
 
@@ -134,21 +93,13 @@ class WalletTest extends ApiTestCase
             "editAt" => $this->dateFormatService->formatDate('2023-01-15 01:02:46')
         ];
 
-        $this->client->request('PUT', '/api/wallets/2', ['headers' => $this->header, 'json' => $json]);
-
+        $wallet = $this->client->request('PUT', '/api/wallets/2', ['headers' => $this->header, 'json' => $json]);
+        $wallet = json_decode($wallet->getContent(), true);
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
-        $this->assertJsonEquals([
-            '@context' => '/api/contexts/Wallet',
-            '@id' => "/api/wallets/2",
-            '@type' => 'Wallet',
-            'id' => 2,
-            "amount" => "100.55",
-            "createdAt" => $this->dateFormatService->formatDate('2021-12-16 20:45:46'),
-            'editAt' => $this->dateFormatService->formatDate('2023-01-15 01:02:46')
-        ]);
+        $this->assertJsonEquals($wallet);
 
         $this->assertMatchesResourceItemJsonSchema(Wallet::class);
     }
@@ -157,7 +108,7 @@ class WalletTest extends ApiTestCase
     {
 
         $this->client->request('DELETE', '/api/wallets/2', ['headers' => $this->header]);
-
+        
         $this->assertResponseStatusCodeSame(204);
 
         $this->assertNull(
@@ -168,10 +119,11 @@ class WalletTest extends ApiTestCase
     public function testGetWalletTransactions()
     {
         $wallet = $this->client->request('GET', '/api/wallets/1/transactions', ['headers' => $this->header]);
-  
+        $wallet = json_decode($wallet->getContent(), true);
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertJsonEquals($wallet->getContent());
+
+        $this->assertJsonEquals($wallet);
 
     }
 }
