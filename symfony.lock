@@ -108,6 +108,9 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
+    "gesdinet/jwt-refresh-token-bundle": {
+        "version": "v1.0.0"
+    },
     "hautelook/alice-bundle": {
         "version": "2.9",
         "recipe": {
