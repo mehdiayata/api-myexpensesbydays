@@ -4,14 +4,15 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use App\Controller\UserPutController;
+use App\Doctrine\DataUserOwnedInterface;
 use App\Controller\RegistrationController;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Doctrine\DataUserOwnedInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
@@ -35,6 +36,14 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
             'openapi_context' =>  [
                 'security' => [['bearerAuth' => []]]
             ],
+        ],
+        'put' => [
+            'openapi_context' => [
+                'security' => [['bearerAuth' => []]]
+            ],
+            'denormalization_context' => ['groups' => 'put:User'],
+            'controller' => UserPutController::class,
+            'method' => 'put',
         ]
     ]
 )]
@@ -64,7 +73,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUse
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
-    #[Groups(['User:Registration'])]
+    #[Groups(['User:Registration', 'put:User'])]
     private $password;
 
     /**
@@ -196,5 +205,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUse
 
         return $this;
     }
-
 }

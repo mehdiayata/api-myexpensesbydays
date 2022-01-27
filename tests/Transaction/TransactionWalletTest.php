@@ -129,6 +129,7 @@ class TransactionWalletTest extends ApiTestCase
 
     public function testPutPositiveTransaction() {
         $oldAmountWallet =  static::getContainer()->get('doctrine')->getRepository(Wallet::class)->find(1)->getAmount();
+        $oldAmountTransaction =  static::getContainer()->get('doctrine')->getRepository(Transaction::class)->find(2)->getAmount();
         $amount = 5000.70;
 
         $json = [
@@ -163,14 +164,14 @@ class TransactionWalletTest extends ApiTestCase
         $wallet = $this->client->request('GET', '/api/wallets/1', ['headers' => $this->header]);
 
         $newAmountWallet = $serializer->decode($wallet->getContent(), 'json')['amount'];
-        $newResult =  $oldAmountWallet + $amount;
+        $newResult =  ($oldAmountWallet - $oldAmountTransaction) + $amount;
 
-        
         $this->assertEquals($newResult, $newAmountWallet);
     }
 
     public function testPutNegativeTransaction() {
         $oldAmountWallet =  static::getContainer()->get('doctrine')->getRepository(Wallet::class)->find(1)->getAmount();
+        $oldAmountTransaction =  static::getContainer()->get('doctrine')->getRepository(Transaction::class)->find(2)->getAmount();
         $amount = -15000.70;
 
         $json = [
@@ -205,7 +206,7 @@ class TransactionWalletTest extends ApiTestCase
         $wallet = $this->client->request('GET', '/api/wallets/1', ['headers' => $this->header]);
 
         $newAmountWallet = $serializer->decode($wallet->getContent(), 'json')['amount'];
-        $newResult =  $oldAmountWallet + $amount;
+        $newResult =  ($oldAmountWallet - $oldAmountTransaction) + $amount;
 
         
         $this->assertEquals($newResult, $newAmountWallet);

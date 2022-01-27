@@ -26,7 +26,7 @@ class UserTest extends ApiTestCase
         $client = static::createClient();
 
         // Création d'un nouvelle utilisateur
-        $this->createUser($client);
+        $this->createUser('test3@test.fr');
 
         // Récupère le token 
         $token = $this->getToken($client);
@@ -55,11 +55,11 @@ class UserTest extends ApiTestCase
     }
 
 
-    public function createUser()
+    public function createUser($username)
     {
         // Création d'un nouvelle utilisateur
         $user = new User();
-        $user->setEmail('test3@test.fr');
+        $user->setEmail($username);
         $user->setPassword(self::getContainer()->get('security.user_password_hasher')->hashPassword($user, 'azerty13'));
 
         $this->entityManager->persist($user);
@@ -80,5 +80,36 @@ class UserTest extends ApiTestCase
 
 
         return $response->toArray()['token'];
+    }
+
+    public function testPutPassword() {
+        $client = static::createClient();
+
+        // Création d'un nouvelle utilisateur
+        $this->createUser('test4@test.fr');
+
+        // Récupère le token 
+        $token = $this->getToken($client);
+
+        $header = [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token,
+                'Content-Type' => 'application/json',
+            ],
+            'json' => [
+                'password' => '4z3rTy13'
+            ]
+
+        ];
+
+        $user = $client->request('PUT', '/api/users/4', $header);
+        $user = json_decode($user->getContent(), true);
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+
+        $this->assertJsonEquals($user);
+
+        $this->assertMatchesResourceItemJsonSchema(User::class);
     }
 }

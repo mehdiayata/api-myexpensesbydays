@@ -18,6 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 
 #[ApiResource(
+    
     denormalizationContext: ['groups' => 'write:Wallet'],
     normalizationContext: ['groups' => 'read:Wallet'],
     collectionOperations: [
@@ -59,6 +60,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'security' => [['bearerAuth' => []]]
             ]
         ],
+        
         'wallet_transactions' => [
             'pagination_enabled' => true,
             'path' => '/wallets/{id}/transactions',
