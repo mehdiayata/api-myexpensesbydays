@@ -7,9 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Doctrine\UserOwnedInterface;
 use App\Repository\WalletRepository;
 use App\Controller\MainWalletController;
+use App\Controller\GetTransactionByWallet;
+use App\Controller\GetMainWalletController;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Controller\GetMainWalletController;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -60,16 +61,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'security' => [['bearerAuth' => []]]
             ]
         ],
-        
         'wallet_transactions' => [
-            'pagination_enabled' => true,
-            'path' => '/wallets/{id}/transactions',
-            'method' => 'get',
-            'read' => true,
-            'normalization_context' => ['groups' => 'read:Wallet:Transaction'],
-            'openapi_context' =>  [
-                'security' => [['bearerAuth' => []]]
-            ]
+                'openapi_context' =>  [
+                    'security' => [['bearerAuth' => []]]
+                ],
+                'path' => '/wallets/{id}/transactions',
+                'method' => 'get',
+                'pagination_enabled' => true,
+                'normalization_context' => ['groups' => 'read:Wallet:Transaction', 'subresource_operation_name' => ''],
+                'controller' => GetTransactionByWallet::class
         ],
         'wallet_main' => [
             'pagination_enabled' => false,

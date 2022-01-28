@@ -5,6 +5,10 @@ namespace App\Repository;
 use App\Entity\Transaction;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use Doctrine\Common\Collections\Criteria;
+
 
 /**
  * @method Transaction|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,9 +18,31 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TransactionRepository extends ServiceEntityRepository
 {
+    const ITEMS_PER_PAGE = 20;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Transaction::class);
+    }
+
+    public function findByWallet(int $page = 1): Paginator
+    {
+        $firstResult = ($page - 1) * self::ITEMS_PER_PAGE;
+
+        $qb = $this->createQueryBuilder('t')
+            ->where('t.wallet = :wallet')
+            ->setParameter('wallet', 223);
+
+        $criteria = Criteria::create()
+            ->setFirstResult($firstResult)
+            ->setMaxResults(self::ITEMS_PER_PAGE);
+        $qb->addCriteria($criteria);
+
+
+        $doctrinePaginator = new DoctrinePaginator($qb);
+        $paginator = new Paginator($doctrinePaginator);
+
+        return $paginator;
     }
 
     // /**
