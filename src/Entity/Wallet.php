@@ -68,6 +68,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'path' => '/wallets/{id}/transactions',
                 'method' => 'get',
                 'pagination_enabled' => true,
+                'read' => true,
                 'normalization_context' => ['groups' => 'read:Wallet:Transaction', 'subresource_operation_name' => ''],
                 'controller' => GetTransactionByWallet::class
         ],

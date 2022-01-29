@@ -25,13 +25,13 @@ class TransactionRepository extends ServiceEntityRepository
         parent::__construct($registry, Transaction::class);
     }
 
-    public function findByWallet(int $page = 1): Paginator
+    public function findByWallet(int $page = 1, $idWallet): Paginator
     {
         $firstResult = ($page - 1) * self::ITEMS_PER_PAGE;
 
         $qb = $this->createQueryBuilder('t')
             ->where('t.wallet = :wallet')
-            ->setParameter('wallet', 223);
+            ->setParameter('wallet', $idWallet);
 
         $criteria = Criteria::create()
             ->setFirstResult($firstResult)
