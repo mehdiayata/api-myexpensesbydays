@@ -26,7 +26,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
             'path' => '/registration',
             'method' => 'post',
             'controller' => RegistrationController::class,
-            'read' => false,
+            'read' => true,
             'security' => 'is_granted("PUBLIC_ACCESS")',
             'denormalization_context' => ['groups' => 'User:Registration']
         ]
