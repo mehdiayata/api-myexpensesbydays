@@ -26,10 +26,7 @@ services:
         arguments: ['@App\OpenApi\OpenApiFactory.inner']
         autoconfigure : false
     
-    App\Faker\Provider\:
-        resource: '%kernel.project_dir%/src/Faker/Provider'
-        public: true
-        tags: ['hautelook_alice.faker.provider']
+    App\Faker\Provider\SymfonyPasswordProvider: ~
 
     App\Serializer\UserOwnedDenormalizer:
         tags:
