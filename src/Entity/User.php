@@ -27,8 +27,11 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
             'method' => 'post',
             'controller' => RegistrationController::class,
             'read' => true,
-            'security' => 'is_granted("PUBLIC_ACCESS")',
-            'denormalization_context' => ['groups' => 'User:Registration']
+            'security' => 'is_granted("ROLE_ADMIN")',
+            'denormalization_context' => ['groups' => 'User:Registration'],
+            'openapi_context' => [
+                'security' => [['bearerAuth' => []]]
+            ],
         ]
     ],
     itemOperations: [
