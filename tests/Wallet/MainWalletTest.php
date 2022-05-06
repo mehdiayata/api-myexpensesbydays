@@ -71,4 +71,34 @@ class MainWalletTest extends ApiTestCase
         $this->assertMatchesResourceItemJsonSchema(Wallet::class);
         
     }
+
+    public function testDeleteLastWallet() {
+
+        // Suppression du Wallet non principal
+        
+        $this->client->request('DELETE', '/api/wallets/2', ['headers' => $this->header]);
+
+        // Vérification que tout marche
+        
+        $this->assertResponseStatusCodeSame(204);
+
+        $this->assertNull(
+            static::getContainer()->get('doctrine')->getRepository(Wallet::class)->findOneBy(['id' => '2'])
+        );
+
+        // Suppression du Wallet principal
+        $this->client->request('DELETE', '/api/wallets/1', ['headers' => $this->header]);
+
+        
+        $this->assertResponseStatusCodeSame(500);
+
+        $this->assertJsonContains([
+            "hydra:description" => "Unable to delete your only wallet"
+        ]);
+        
+        $this->assertNotNull(
+            static::getContainer()->get('doctrine')->getRepository(Wallet::class)->findOneBy(['id' => '1'])
+        );
+        
+    }
 }

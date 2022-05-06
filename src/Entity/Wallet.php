@@ -11,6 +11,7 @@ use App\Controller\GetTransactionByWallet;
 use App\Controller\GetMainWalletController;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\WalletDeleteController;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -59,7 +60,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'delete' => [
             'openapi_context' =>  [
                 'security' => [['bearerAuth' => []]]
-            ]
+            ],
+            'method' => 'delete',
+            'controller' => WalletDeleteController::class,
+            'read' => true
         ],
         'wallet_transactions' => [
                 'openapi_context' =>  [
