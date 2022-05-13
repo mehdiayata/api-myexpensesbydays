@@ -30,7 +30,8 @@ class BudgetTest extends ApiTestCase
 
         $json = [
             "amount" => "100.00",
-            "wallet" => "api/wallets/1"
+            "wallet" => "api/wallets/1",
+            "dueDate" => ['01', '25', '18']
         ];
 
         
@@ -50,7 +51,8 @@ class BudgetTest extends ApiTestCase
             '@type' => 'Budget',
             'id' => $nbBudget + 1,
             'wallet' => '/api/wallets/1',
-            "amount" => "100.00"
+            "amount" => "100.00",
+            "dueDate" => ['01', '25', '18']
         ]);
 
         $this->assertMatchesResourceItemJsonSchema(Budget::class);

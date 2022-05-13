@@ -2,5 +2,6 @@ App\Entity\Budget:
     budget{1..40}:
         amount: '<randomFloat(2, 0, 2000)>'
         wallet: '@wallet_*'
+        dueDate: ['<numberBetween(1, 28)>', '<numberBetween(1, 28)>', '<numberBetween(1, 28)>']
         
   

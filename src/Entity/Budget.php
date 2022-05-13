@@ -37,6 +37,11 @@ class Budget
      */
     private $wallet;
 
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $dueDate = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,6 +67,18 @@ class Budget
     public function setWallet(?Wallet $wallet): self
     {
         $this->wallet = $wallet;
+
+        return $this;
+    }
+
+    public function getDueDate(): ?array
+    {
+        return $this->dueDate;
+    }
+
+    public function setDueDate(array $dueDate): self
+    {
+        $this->dueDate = $dueDate;
 
         return $this;
     }
