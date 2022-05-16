@@ -2,12 +2,13 @@
 
 namespace App\Repository;
 
+use App\Entity\Budget;
 use App\Entity\Transaction;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Persistence\ManagerRegistry;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 
 /**
@@ -44,6 +45,36 @@ class TransactionRepository extends ServiceEntityRepository
 
         return $paginator;
     }
+
+    public function addTransactionByBudget()
+    {
+        $entityManager = $this->getEntityManager();
+
+        // Find all budget 
+        $budgetRepository = $entityManager->getRepository(Budget::class);
+
+        $budgets = $budgetRepository->findAll();
+
+        // Loop budget 
+        foreach ($budgets as $budget) {
+
+            if ($budget->getDueDate()) {
+                foreach ($budget->getDueDate() as $dateTransaction) {
+                    if ($dateTransaction == date('d')) {
+                        $transaction = new Transaction();
+                        $transaction->setAmount($budget->getAmount());
+                        $transaction->setWallet($budget->getWallet());
+                        $transaction->setCreatedAt(new \DateTime('now'));
+
+                        $entityManager->persist($transaction);
+                        $entityManager->flush();
+                    }
+                }
+            }
+        }
+    }
+
+
 
     // /**
     //  * @return Transaction[] Returns an array of Transaction objects

@@ -38,7 +38,7 @@ class Budget
     private $wallet;
 
     /**
-     * @ORM\Column(type="array")
+     * @ORM\Column(type="json")
      */
     private $dueDate = [];
 
