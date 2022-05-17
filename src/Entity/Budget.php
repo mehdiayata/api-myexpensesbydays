@@ -42,6 +42,11 @@ class Budget
      */
     private $dueDate = [];
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $coast;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -79,6 +84,18 @@ class Budget
     public function setDueDate(array $dueDate): self
     {
         $this->dueDate = $dueDate;
+
+        return $this;
+    }
+
+    public function getCoast(): ?bool
+    {
+        return $this->coast;
+    }
+
+    public function setCoast(bool $coast): self
+    {
+        $this->coast = $coast;
 
         return $this;
     }

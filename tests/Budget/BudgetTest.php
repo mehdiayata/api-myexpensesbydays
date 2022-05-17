@@ -26,12 +26,13 @@ class BudgetTest extends ApiTestCase
 
     }
 
-    public function testPostBudget() {
+    public function testPostIncome() {
 
         $json = [
             "amount" => "100.00",
             "wallet" => "api/wallets/1",
-            "dueDate" => ['01', '25', '18']
+            "dueDate" => ['01', '25', '18'], 
+            "coast" => false
         ];
 
         
@@ -52,7 +53,8 @@ class BudgetTest extends ApiTestCase
             'id' => $nbBudget + 1,
             'wallet' => '/api/wallets/1',
             "amount" => "100.00",
-            "dueDate" => ['01', '25', '18']
+            "dueDate" => ['01', '25', '18'],
+            "coast" => false
         ]);
 
         $this->assertMatchesResourceItemJsonSchema(Budget::class);
@@ -60,5 +62,38 @@ class BudgetTest extends ApiTestCase
     }
 
     
+    public function testPostCoast() {
+
+        $json = [
+            "amount" => "250.00",
+            "wallet" => "api/wallets/1",
+            "dueDate" => ['01', '25', '18'], 
+            "coast" => true
+        ];
+
+        
+        // Récupère le nombre d'enregistrement
+        $nbBudget =  count(static::getContainer()->get('doctrine')->getRepository(Budget::class)->findAll());
+
+        $this->client->request('POST', '/api/budgets', ['headers' => $this->header, 'json' => $json]);
+
+        $this->assertResponseStatusCodeSame(201);
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+
+        // Tester si le retour Json est correct
+        $this->assertJsonEquals([
+            '@context' => '/api/contexts/Budget',
+            '@id' => "/api/budgets/" . $nbBudget + 1 ,
+            '@type' => 'Budget',
+            'id' => $nbBudget + 1,
+            'wallet' => '/api/wallets/1',
+            "amount" => "250.00",
+            "dueDate" => ['01', '25', '18'],
+            "coast" => true
+        ]);
+
+        $this->assertMatchesResourceItemJsonSchema(Budget::class);
+   
+    }
 
 }

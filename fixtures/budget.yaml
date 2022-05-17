@@ -3,5 +3,6 @@ App\Entity\Budget:
         amount: '<randomFloat(2, 0, 2000)>'
         wallet: '@wallet_*'
         dueDate: ['<numberBetween(1, 28)>', '<numberBetween(1, 28)>', '<numberBetween(1, 28)>']
+        coast: '<numberBetween(0, 1)>'
         
   
