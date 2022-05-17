@@ -40,7 +40,6 @@ class WalletTest extends ApiTestCase
 
     }
 
-
     public function testGetWallets()
     {
         $wallets = $this->client->request('GET', '/api/wallets', ['headers' => $this->header]);
@@ -68,7 +67,8 @@ class WalletTest extends ApiTestCase
     {
         $json = [
             "amount" => "355.55",
-            "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46')
+            "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46'),
+            "saving" => "200"
         ];
 
         // Récupère le nombre d'enregistrement
@@ -119,6 +119,17 @@ class WalletTest extends ApiTestCase
     public function testGetWalletTransactions()
     {
         $wallet = $this->client->request('GET', '/api/wallets/1/transactions', ['headers' => $this->header]);
+        $wallet = json_decode($wallet->getContent(), true);
+        $this->assertResponseStatusCodeSame(200);
+
+
+        $this->assertJsonEquals($wallet);
+
+    }
+
+    public function testGetWalletBudget()
+    {
+        $wallet = $this->client->request('GET', '/api/wallets/1/budgets', ['headers' => $this->header]);
         $wallet = json_decode($wallet->getContent(), true);
         $this->assertResponseStatusCodeSame(200);
 

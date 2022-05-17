@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\BudgetRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\BudgetRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=BudgetRepository::class)
@@ -12,6 +13,11 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     collectionOperations: [
         'post' => [
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ],
+        ],
+        'get' => [
             'openapi_context' =>  [
                 'security' => [['bearerAuth' => []]]
             ],
@@ -25,11 +31,13 @@ class Budget
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
+    #[Groups(['read:Wallet:Budget'])]
     private $id;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      */
+    #[Groups(['read:Wallet:Budget'])]
     private $amount;
 
     /**
@@ -40,11 +48,13 @@ class Budget
     /**
      * @ORM\Column(type="json")
      */
+    #[Groups(['read:Wallet:Budget'])]
     private $dueDate = [];
 
     /**
      * @ORM\Column(type="boolean")
      */
+    #[Groups(['read:Wallet:Budget'])]
     private $coast;
 
     public function getId(): ?int

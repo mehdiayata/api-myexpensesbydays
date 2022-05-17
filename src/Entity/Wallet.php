@@ -6,12 +6,13 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use App\Doctrine\UserOwnedInterface;
 use App\Repository\WalletRepository;
+use App\Controller\GetBudgetByWallet;
 use App\Controller\MainWalletController;
 use App\Controller\GetTransactionByWallet;
+use App\Controller\WalletDeleteController;
 use App\Controller\GetMainWalletController;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Controller\WalletDeleteController;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -20,7 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 
 #[ApiResource(
-    
+
     denormalizationContext: ['groups' => 'write:Wallet'],
     normalizationContext: ['groups' => 'read:Wallet'],
     collectionOperations: [
@@ -66,15 +67,26 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'read' => true
         ],
         'wallet_transactions' => [
-                'openapi_context' =>  [
-                    'security' => [['bearerAuth' => []]]
-                ],
-                'path' => '/wallets/{id}/transactions',
-                'method' => 'get',
-                'pagination_enabled' => true,
-                'read' => true,
-                'normalization_context' => ['groups' => 'read:Wallet:Transaction', 'subresource_operation_name' => ''],
-                'controller' => GetTransactionByWallet::class
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ],
+            'path' => '/wallets/{id}/transactions',
+            'method' => 'get',
+            'pagination_enabled' => true,
+            'read' => true,
+            'normalization_context' => ['groups' => 'read:Wallet:Transaction', 'subresource_operation_name' => ''],
+            'controller' => GetTransactionByWallet::class
+        ],
+        'wallet_budget' => [
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ],
+            'path' => '/wallets/{id}/budgets',
+            'method' => 'get',
+            'pagination_enabled' => true,
+            'read' => true,
+            'normalization_context' => ['groups' => 'read:Wallet:Budget', 'subresource_operation_name' => ''],
+            'controller' => GetBudgetByWallet::class
         ],
         'wallet_main' => [
             'pagination_enabled' => false,
@@ -103,7 +115,7 @@ class Wallet implements UserOwnedInterface
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      */
-    #[Groups(['read:Wallet', 'write:Wallet', 'put:Wallet', 'read:Wallet:Transaction'])]
+    #[Groups(['read:Wallet', 'write:Wallet', 'put:Wallet', 'read:Wallet:Transaction', 'read:Wallet:Budget'])]
     private $amount;
 
     /**
@@ -122,13 +134,13 @@ class Wallet implements UserOwnedInterface
     /**
      * @ORM\Column(type="datetime")
      */
-    #[Groups(['read:Wallet', 'write:Wallet', 'read:Wallet:Transaction'])]
+    #[Groups(['read:Wallet', 'write:Wallet', 'read:Wallet:Transaction', 'read:Wallet:Budget'])]
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    #[Groups(['read:Wallet', 'put:Wallet', 'read:Wallet:Transaction'])]
+    #[Groups(['read:Wallet', 'put:Wallet', 'read:Wallet:Transaction', 'read:Wallet:Transaction'])]
     private $editAt;
 
     /**
@@ -138,9 +150,17 @@ class Wallet implements UserOwnedInterface
     private $main = 0;
 
     /**
-     * @ORM\OneToMany(targetEntity=Budget::class, mappedBy="wallet")
+     * @ORM\OneToMany(targetEntity=Budget::class, mappedBy="wallet", orphanRemoval=true)
      */
+    #[Groups(['read:Wallet:Transaction'])]
     private $budgets;
+
+
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2)
+     */
+    #[Groups(['write:Wallet'])]
+    private $saving;
 
     public function __construct()
     {
@@ -269,6 +289,18 @@ class Wallet implements UserOwnedInterface
                 $budget->setWallet(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSaving(): ?string
+    {
+        return $this->saving;
+    }
+
+    public function setSaving(string $saving): self
+    {
+        $this->saving = $saving;
 
         return $this;
     }

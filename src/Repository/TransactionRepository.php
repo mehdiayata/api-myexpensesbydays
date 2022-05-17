@@ -62,7 +62,14 @@ class TransactionRepository extends ServiceEntityRepository
                 foreach ($budget->getDueDate() as $dateTransaction) {
                     if ($dateTransaction == date('d')) {
                         $transaction = new Transaction();
-                        $transaction->setAmount($budget->getAmount());
+
+                        if ($budget->getCoast() == false) {
+
+                            $transaction->setAmount($budget->getAmount());
+                        } else {
+                            $transaction->setAmount(0 - $budget->getAmount());
+                        }
+
                         $transaction->setWallet($budget->getWallet());
                         $transaction->setCreatedAt(new \DateTime('now'));
 

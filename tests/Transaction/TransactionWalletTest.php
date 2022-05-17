@@ -149,7 +149,7 @@ class TransactionWalletTest extends ApiTestCase
             '@type' => 'Transaction',
             'id' => 2,
             'wallet' => '/api/wallets/1',
-            "amount" => $amount,
+            "amount" => "$amount",
             "createdAt" => $this->dateFormatService->formatDate('2021-12-16 02:10:38'),
             "editAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46')
         ]);
