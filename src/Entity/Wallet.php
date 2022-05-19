@@ -83,7 +83,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             ],
             'path' => '/wallets/{id}/budgets',
             'method' => 'get',
-            'pagination_enabled' => true,
+            'pagination_enabled' => false,
             'read' => true,
             'normalization_context' => ['groups' => 'read:Wallet:Budget', 'subresource_operation_name' => ''],
             'controller' => GetBudgetByWallet::class
@@ -157,10 +157,16 @@ class Wallet implements UserOwnedInterface
 
 
     /**
-     * @ORM\Column(type="decimal", precision=10, scale=2)
+     * @ORM\Column(type="decimal", precision=10, scale=2, options={"default" : 0})
      */
-    #[Groups(['write:Wallet'])]
+    #[Groups(['write:Wallet', 'put:Wallet', 'read:Wallet'])]
     private $saving;
+
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2, options={"default" : 0})
+     */
+    #[Groups(['write:Wallet', 'put:Wallet', 'read:Wallet'])]
+    private $savingReal;
 
     public function __construct()
     {
@@ -301,6 +307,18 @@ class Wallet implements UserOwnedInterface
     public function setSaving(string $saving): self
     {
         $this->saving = $saving;
+
+        return $this;
+    }
+
+    public function getSavingReal(): ?string
+    {
+        return $this->savingReal;
+    }
+
+    public function setSavingReal(string $savingReal): self
+    {
+        $this->savingReal = $savingReal;
 
         return $this;
     }

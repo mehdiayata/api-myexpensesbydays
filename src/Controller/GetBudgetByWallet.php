@@ -12,11 +12,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[AsController]
 class GetBudgetByWallet extends AbstractController
 {
-    public function __invoke(Wallet $data, Request $request, BudgetRepository $budgetRepository,): Paginator
+    public function __invoke(Wallet $data, Request $request, BudgetRepository $budgetRepository)
     {   
-        $page = (int) $request->query->get('page', 1);
             
-        return $budgetRepository->findByWallet($page, $data->getId());
+        return $budgetRepository->findByWallet( $data->getId());
 
     }
 }

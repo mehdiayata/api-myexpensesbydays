@@ -68,7 +68,7 @@ class TransactionTest extends ApiTestCase
     public function testPostTransaction()
     {
         $json = [
-            "amount" => "355.55",
+            "amount" => "-355.55",
             "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46'),
             "wallet" => "api/wallets/1"
         ];

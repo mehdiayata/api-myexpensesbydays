@@ -68,7 +68,8 @@ class WalletTest extends ApiTestCase
         $json = [
             "amount" => "355.55",
             "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46'),
-            "saving" => "200"
+            "saving" => "0",
+            "savingReal" => "0"
         ];
 
         // Récupère le nombre d'enregistrement
@@ -136,5 +137,39 @@ class WalletTest extends ApiTestCase
 
         $this->assertJsonEquals($wallet);
 
+    }
+
+    public function testPutSaving() {
+        
+        $json = [
+            "saving" => "500"
+        ];
+
+        $wallet = $this->client->request('PUT', '/api/wallets/2', ['headers' => $this->header, 'json' => $json]);
+        $wallet = json_decode($wallet->getContent(), true);
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+
+        $this->assertJsonEquals($wallet);
+
+        $this->assertMatchesResourceItemJsonSchema(Wallet::class);
+    }
+
+    public function testPutSavingReal() {
+        
+        $json = [
+            "savingReal" => "10"
+        ];
+
+        $wallet = $this->client->request('PUT', '/api/wallets/2', ['headers' => $this->header, 'json' => $json]);
+        $wallet = json_decode($wallet->getContent(), true);
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+
+        $this->assertJsonEquals($wallet);
+
+        $this->assertMatchesResourceItemJsonSchema(Wallet::class);
     }
 }

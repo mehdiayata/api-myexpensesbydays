@@ -25,25 +25,35 @@ class BudgetRepository extends ServiceEntityRepository
     }
 
     
-    public function findByWallet(int $page = 1, $idWallet): Paginator
+    public function findByWallet($idWallet)
     {
-        $firstResult = ($page - 1) * self::ITEMS_PER_PAGE;
 
-        $qb = $this->createQueryBuilder('b')
+        return $this->createQueryBuilder('b')
             ->where('b.wallet = :wallet')
-            ->setParameter('wallet', $idWallet);
+            ->setParameter('wallet', $idWallet)
+            ->getQuery()
+            ->getResult();
 
-        $criteria = Criteria::create()
-            ->setFirstResult($firstResult)
-            ->setMaxResults(self::ITEMS_PER_PAGE);
-        $qb->addCriteria($criteria);
-
-
-        $doctrinePaginator = new DoctrinePaginator($qb);
-        $paginator = new Paginator($doctrinePaginator);
-
-        return $paginator;
     }
 
+    // public function findByWallet(int $page = 1, $idWallet): Paginator
+    // {
+    //     $firstResult = ($page - 1) * self::ITEMS_PER_PAGE;
+
+    //     $qb = $this->createQueryBuilder('b')
+    //         ->where('b.wallet = :wallet')
+    //         ->setParameter('wallet', $idWallet);
+
+    //     $criteria = Criteria::create()
+    //         ->setFirstResult($firstResult)
+    //         ->setMaxResults(self::ITEMS_PER_PAGE);
+    //     $qb->addCriteria($criteria);
+
+
+    //     $doctrinePaginator = new DoctrinePaginator($qb);
+    //     $paginator = new Paginator($doctrinePaginator);
+
+    //     return $paginator;
+    // }
 
 }

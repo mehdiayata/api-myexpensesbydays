@@ -22,7 +22,9 @@ class TransactionDeleteController extends AbstractController
         // Permet de soustraire la somme de la transaction supprimer, à la somme du wallet de la transaction.
         $wallet = $data->getWallet();
         $result = $wallet->getAmount() - $data->getAmount();
+        $savinReal = $wallet->getAmount() - $data->getAmount();
         $wallet->setAmount($result);
+        $wallet->setSavingReal($savinReal);
 
         $this->em->persist($wallet);
         $this->em->flush();

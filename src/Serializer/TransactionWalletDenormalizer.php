@@ -44,6 +44,7 @@ class TransactionWalletDenormalizer implements ContextAwareDenormalizerInterface
         $obj = $this->denormalizer->denormalize($data, $type, $format, $context);
 
         $this->editAmountWallet($obj, $context, $amountOldTransaction);
+        $this->editSavingRealWallet($obj, $context, $amountOldTransaction);
 
         return $obj;
     }
@@ -66,9 +67,29 @@ class TransactionWalletDenormalizer implements ContextAwareDenormalizerInterface
 
             $wallet->setAmount($result);
         }
+        
 
 
         $this->em->persist($wallet);
         $this->em->flush();
+    }
+
+    public function editSavingRealWallet($obj, $context, $amountOldTransaction) {
+        if (isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post') {
+            $wallet = $obj->getWallet();
+            $result = $wallet->getSavingReal() + $obj->getAmount();
+            $wallet->setSavingReal($result);
+        }
+
+        if (isset($context['item_operation_name']) && $context['item_operation_name'] == 'put') {
+
+            // Récupère la somme de la transaciton à modifier (avant que cette dernière ne soit modifier)
+            $wallet = $obj->getWallet();
+            $result = $wallet->getSavingReal() - $amountOldTransaction;
+
+            $result = $result + $obj->getAmount();
+
+            $wallet->setSavingReal($result);
+        }
     }
 }

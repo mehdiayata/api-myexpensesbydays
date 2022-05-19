@@ -5,6 +5,7 @@ App\Entity\Wallet:
         owner: '@user_4'
         main: 0
         saving: '<randomFloat(2, 50, 500)>'
+        saving_real: '0.00'
     
     wallet_1:
         amount: '<randomFloat(2, 10000, 1000000)>'
@@ -12,6 +13,7 @@ App\Entity\Wallet:
         owner: '@user_4'
         main: 1
         saving: '<randomFloat(2, 50, 500)>'
+        saving_real: '0.00'
     
 
     wallet_{3..5}:
@@ -20,6 +22,7 @@ App\Entity\Wallet:
         owner: '@user_1'
         main: 0
         saving: '<randomFloat(2, 50, 500)>'
+        saving_real: '0.00'
     
     wallet_3:
         amount: '<randomFloat(2, 10000, 1000000)>'
@@ -27,6 +30,7 @@ App\Entity\Wallet:
         owner: '@user_1'
         main: 1
         saving: '<randomFloat(2, 50, 500)>'
+        saving_real: '0.00'
         
 
 
