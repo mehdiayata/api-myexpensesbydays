@@ -3,10 +3,8 @@
 namespace App\Tests\Wallet;
 
 use App\Entity\Wallet;
-use App\Entity\Transaction;
 use App\Tests\LoginTestClass;
 use App\Service\DateFormatService;
-use App\Repository\WalletRepository;
 use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 
@@ -14,9 +12,6 @@ class WalletTest extends ApiTestCase
 {
     use RefreshDatabaseTrait;
 
-    /**
-     * @var \Doctrine\ORM\EntityManager
-     */
     private $dateFormatService;
     private $client;
     private $header;
@@ -36,8 +31,6 @@ class WalletTest extends ApiTestCase
             'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
         ];
-
-
     }
 
     public function testGetWallets()
@@ -144,9 +137,10 @@ class WalletTest extends ApiTestCase
         $json = [
             "saving" => "500"
         ];
-
-        $wallet = $this->client->request('PUT', '/api/wallets/2', ['headers' => $this->header, 'json' => $json]);
+        $wallet = $this->client->request('PUT', '/api/wallets/6', ['headers' => $this->header, 'json' => $json]);
+        
         $wallet = json_decode($wallet->getContent(), true);
+        
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
@@ -162,7 +156,7 @@ class WalletTest extends ApiTestCase
             "savingReal" => "10"
         ];
 
-        $wallet = $this->client->request('PUT', '/api/wallets/2', ['headers' => $this->header, 'json' => $json]);
+        $wallet = $this->client->request('PUT', '/api/wallets/6', ['headers' => $this->header, 'json' => $json]);
         $wallet = json_decode($wallet->getContent(), true);
 
         $this->assertResponseStatusCodeSame(200);

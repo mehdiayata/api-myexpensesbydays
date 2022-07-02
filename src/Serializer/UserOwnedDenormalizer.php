@@ -34,9 +34,6 @@ class UserOwnedDenormalizer implements ContextAwareDenormalizerInterface, Denorm
 
         $obj->setOwner($this->security->getUser());
 
-
         return $obj;
-
-
     }
 }

@@ -3,33 +3,36 @@
 namespace App\Tests\User;
 
 use App\Entity\User;
+use App\Tests\LoginTestClass;
 use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 
 class UserTest extends ApiTestCase
 {
+    use RefreshDatabaseTrait;
+
     /**
      * @var \Doctrine\ORM\EntityManager
      */
     private $entityManager;
+    private $client;
+    private $token;
 
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        $this->client = static::createClient();
+        
+        $loginTestClass = new LoginTestClass();   
+        $this->token = $loginTestClass->getToken($this->client); 
     }
 
-    use RefreshDatabaseTrait;
 
     public function testGetUser()
     {
-        $client = static::createClient();
-
-        // Création d'un nouvelle utilisateur
-        $this->createUser('test3@test.fr');
-
         // Récupère le token 
-        $token = $this->getToken($client);
+        $token = $this->token;
 
         $header = [
             'headers' => [
@@ -38,8 +41,8 @@ class UserTest extends ApiTestCase
             ],
         ];
 
-        $client->request('GET', '/api/users/4', $header);
-        
+        $test = $this->client->request('GET', '/api/users/4', $header);
+
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
@@ -51,45 +54,16 @@ class UserTest extends ApiTestCase
             'email' => 'test@test.fr',
             'roles' => ['0' => 'ROLE_USER']
         ]);
-
     }
 
 
-    public function createUser($username)
-    {
-        // Création d'un nouvelle utilisateur
-        $user = new User();
-        $user->setEmail($username);
-        $user->setPassword(self::getContainer()->get('security.user_password_hasher')->hashPassword($user, 'azerty13'));
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-    }
 
-    public function getToken($client)
+    public function testPutPassword()
     {
 
-        $response = $client->request('POST', '/api/login', [
-            'headers' => ['Content-Type' => 'application/json'],
-            'json' => [
-                'username' => 'test@test.fr',
-                'password' => 'azerty13'
-            ],
-        ]);
-
-
-
-        return $response->toArray()['token'];
-    }
-
-    public function testPutPassword() {
-        $client = static::createClient();
-
-        // Création d'un nouvelle utilisateur
-        $this->createUser('test4@test.fr');
-
-        // Récupère le token 
-        $token = $this->getToken($client);
+        // Récupère le token (Login)
+        $token = $this->token;
 
         $header = [
             'headers' => [
@@ -97,19 +71,43 @@ class UserTest extends ApiTestCase
                 'Content-Type' => 'application/json',
             ],
             'json' => [
-                'password' => '4z3rTy13'
+                'password' => 'newPassword'
             ]
 
         ];
 
-        $user = $client->request('PUT', '/api/users/4', $header);
-        $user = json_decode($user->getContent(), true);
+        $this->client->request('PUT', '/api/users/4', $header);
 
+        // Test si un update a bien été fait
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
-        $this->assertJsonEquals($user);
-
+        $this->assertJsonEquals([
+            "@context" => "/api/contexts/User",
+            "@id" => "/api/users/4",
+            "@type" => "User",
+            "id" => 4,
+            "email" => "test@test.fr",
+            "roles" => ["ROLE_USER"]
+        ]);
         $this->assertMatchesResourceItemJsonSchema(User::class);
+
+
+        // Test si l'on peut se connecté avec le nouveau mot de passe
+        $header = [
+            'headers' => ['Content-Type' => 'application/json'],
+            'json' => [
+                'username' => 'test@test.fr',
+                'password' => 'newPassword'
+            ],
+        ];
+
+        $response = $this->client->request('POST', '/api/login', $header);
+
+        $json = $response->toArray();
+        $this->assertResponseIsSuccessful();
+        $this->assertArrayHasKey('token', $json);
+
     }
+
 }

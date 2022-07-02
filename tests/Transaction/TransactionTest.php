@@ -87,7 +87,7 @@ class TransactionTest extends ApiTestCase
             '@type' => 'Transaction',
             'id' => $nbTransaction + 1,
             'wallet' => '/api/wallets/1',
-            "amount" => "355.55",
+            "amount" => "-355.55",
             "createdAt" => $this->dateFormatService->formatDate('2021-12-18 20:45:46'),
             "editAt" => null
         ]);
@@ -109,14 +109,14 @@ class TransactionTest extends ApiTestCase
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
 
-        $this->assertJsonEquals([
+        $this->assertJsonContains([
             '@context' => '/api/contexts/Transaction',
             '@id' => "/api/transactions/2",
             '@type' => 'Transaction',
             'id' => 2,
             "amount" => "210.00",
-            'wallet' => '/api/wallets/1',
-            "createdAt" => $this->dateFormatService->formatDate('2021-12-16 02:10:38'),
+            'wallet' => '/api/wallets/2',
+            "createdAt" => $this->dateFormatService->formatDate('2021-12-16 17:30:48'),
             "editAt" => $this->dateFormatService->formatDate('2022-01-01 07:00:00')
         ]);
 

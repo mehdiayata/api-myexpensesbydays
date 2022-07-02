@@ -12,46 +12,31 @@ class LoginTest extends ApiTestCase
      * @var \Doctrine\ORM\EntityManager
      */
     private $entityManager;
+    private $client;
 
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        $this->client = static::createClient();
     }
 
     use RefreshDatabaseTrait;
 
     public function testToken()
     {
-
-        $client = static::createClient();
-
-        // Création d'un nouvelle utilisateur
-        $this->createUser($client);
-
-        $response = $client->request('POST', '/api/login', [
+        $header = [
             'headers' => ['Content-Type' => 'application/json'],
             'json' => [
-                'username' => 'test3@test.fr',
+                'username' => 'test@test.fr',
                 'password' => 'azerty13'
             ],
-        ]);
+        ];
 
+        $response = $this->client->request('POST', '/api/login', $header);
 
         $json = $response->toArray();
         $this->assertResponseIsSuccessful();
         $this->assertArrayHasKey('token', $json);
-    }
-
-
-    public function createUser($client)
-    {
-        // Création d'un nouvelle utilisateur
-        $user = new User();
-        $user->setEmail('test3@test.fr');
-        $user->setPassword(self::getContainer()->get('security.user_password_hasher')->hashPassword($user, 'azerty13'));
-
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
     }
 }

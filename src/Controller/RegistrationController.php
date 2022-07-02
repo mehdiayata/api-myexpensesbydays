@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Wallet;
-use App\Service\DateFormatService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -36,6 +35,8 @@ class RegistrationController extends AbstractController
         $newMainWallet->setMain(1);
         $newMainWallet->setOwner($user);
         $newMainWallet->setCreatedAt(new \DateTime('now'));
+        $newMainWallet->setSaving(0);
+        $newMainWallet->setSavingReal(0);
         
         $this->em->persist($newMainWallet);
 
