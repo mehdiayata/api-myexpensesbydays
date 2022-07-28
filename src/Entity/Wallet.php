@@ -77,16 +77,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'normalization_context' => ['groups' => 'read:Wallet:Transaction', 'subresource_operation_name' => ''],
             'controller' => GetTransactionByWallet::class
         ],
-        'wallet_budget' => [
-            'openapi_context' =>  [
-                'security' => [['bearerAuth' => []]]
-            ],
-            'path' => '/wallets/{id}/budgets',
+        'wallet_budget_coast' => [
+            'path' => '/wallets/{id}/budgets/coasts',
             'method' => 'get',
             'pagination_enabled' => false,
             'read' => true,
             'normalization_context' => ['groups' => 'read:Wallet:Budget', 'subresource_operation_name' => ''],
-            'controller' => GetBudgetByWallet::class
+            'controller' => GetBudgetByWallet::class,
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ],
         ],
         'wallet_main' => [
             'pagination_enabled' => false,

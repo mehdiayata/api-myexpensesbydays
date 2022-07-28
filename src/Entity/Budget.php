@@ -17,11 +17,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'security' => [['bearerAuth' => []]]
             ],
         ],
-        'get' => [
-            'openapi_context' =>  [
-                'security' => [['bearerAuth' => []]]
-            ],
-        ]
     ]
 )]
 class Budget

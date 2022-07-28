@@ -30,7 +30,9 @@ class BudgetRepository extends ServiceEntityRepository
 
         return $this->createQueryBuilder('b')
             ->where('b.wallet = :wallet')
+            ->andWhere('b.coast = :coast')
             ->setParameter('wallet', $idWallet)
+            ->setParameter('coast', 1)
             ->getQuery()
             ->getResult();
 

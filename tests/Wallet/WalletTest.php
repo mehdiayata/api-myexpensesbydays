@@ -123,11 +123,29 @@ class WalletTest extends ApiTestCase
 
     public function testGetWalletBudget()
     {
-        $wallet = $this->client->request('GET', '/api/wallets/1/budgets', ['headers' => $this->header]);
+        $wallet = $this->client->request('GET', '/api/wallets/1/budgets/coasts', ['headers' => $this->header]);
         $wallet = json_decode($wallet->getContent(), true);
         $this->assertResponseStatusCodeSame(200);
 
-
+        $this->assertJsonContains([
+            "@context"=> "/api/contexts/Wallet",
+            "@id"=> "/api/wallets",
+            "@type"=> "hydra:Collection",
+            "hydra:member"=> [
+              [
+                "@id" => "/api/budgets/12",
+                "@type" => "Budget",
+                "id" =>  12,
+                "amount" => "895.96",
+                "dueDate" => [
+                  3,
+                  6
+                ],
+                "coast" => true
+            ]
+            ],
+        ]);
+        
         $this->assertJsonEquals($wallet);
 
     }
