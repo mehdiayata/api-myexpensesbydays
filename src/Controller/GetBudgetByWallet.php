@@ -15,7 +15,7 @@ class GetBudgetByWallet extends AbstractController
     public function __invoke(Wallet $data, Request $request, BudgetRepository $budgetRepository)
     {   
             
-        return $budgetRepository->findByWallet( $data->getId());
+        return $budgetRepository->findCoastByWallet( $data->getId());
 
     }
 }

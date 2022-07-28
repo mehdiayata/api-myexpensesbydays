@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\BudgetRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Doctrine\Transaction\TransactionUserOwnedInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -17,9 +18,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'security' => [['bearerAuth' => []]]
             ],
         ],
+    ],
+    itemOperations: [
+        'get',
+        'put' => [
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ],
+            'denormalization_context' => ['groups' => 'put:Budget']
+        ]
     ]
 )]
-class Budget
+class Budget implements TransactionUserOwnedInterface
 {
     /**
      * @ORM\Id
@@ -32,7 +42,7 @@ class Budget
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      */
-    #[Groups(['read:Wallet:Budget'])]
+    #[Groups(['read:Wallet:Budget', 'put:Budget'])]
     private $amount;
 
     /**
@@ -43,13 +53,13 @@ class Budget
     /**
      * @ORM\Column(type="json")
      */
-    #[Groups(['read:Wallet:Budget'])]
+    #[Groups(['read:Wallet:Budget', 'put:Budget'])]
     private $dueDate = [];
 
     /**
      * @ORM\Column(type="boolean")
      */
-    #[Groups(['read:Wallet:Budget'])]
+    #[Groups(['read:Wallet:Budget', 'put:Budget'])]
     private $coast;
 
     public function getId(): ?int

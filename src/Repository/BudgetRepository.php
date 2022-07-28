@@ -25,7 +25,7 @@ class BudgetRepository extends ServiceEntityRepository
     }
 
     
-    public function findByWallet($idWallet)
+    public function findCoastByWallet($idWallet)
     {
 
         return $this->createQueryBuilder('b')
