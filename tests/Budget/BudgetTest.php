@@ -103,7 +103,7 @@ class BudgetTest extends ApiTestCase
             "coast" => true
         ];
 
-        $test = $this->client->request('PUT', '/api/budgets/1', ['headers' => $this->header, 'json' => $json]);
+        $this->client->request('PUT', '/api/budgets/1', ['headers' => $this->header, 'json' => $json]);
 
 
         $this->assertResponseStatusCodeSame(200);
@@ -122,5 +122,17 @@ class BudgetTest extends ApiTestCase
 
 
         $this->assertMatchesResourceItemJsonSchema(Budget::class);
+    }
+
+    public function testDeleteCoast() {
+
+        
+        $this->client->request('DELETE', '/api/budgets/1', ['headers' => $this->header]);
+        
+        $this->assertResponseStatusCodeSame(204);
+
+        $this->assertNull(
+            static::getContainer()->get('doctrine')->getRepository(Budget::class)->findOneBy(['id' => '1'])
+        );
     }
 }

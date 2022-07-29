@@ -26,7 +26,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'security' => [['bearerAuth' => []]]
             ],
             'denormalization_context' => ['groups' => 'put:Budget']
-        ]
+        ],
+        'delete' => [
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ]
+        ],
     ]
 )]
 class Budget implements TransactionUserOwnedInterface
