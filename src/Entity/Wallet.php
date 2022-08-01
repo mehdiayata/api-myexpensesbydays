@@ -88,6 +88,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'security' => [['bearerAuth' => []]]
             ],
         ],
+        'wallet_budget_income' => [
+            'path' => '/wallets/{id}/budgets/incomes',
+            'method' => 'get',
+            'pagination_enabled' => false,
+            'read' => true,
+            'normalization_context' => ['groups' => 'read:Wallet:Budget', 'subresource_operation_name' => ''],
+            'controller' => GetBudgetByWallet::class,
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ],
+        ],
         'wallet_main' => [
             'pagination_enabled' => false,
             'path' => '/wallets/{id}/main',

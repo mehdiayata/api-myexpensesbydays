@@ -38,6 +38,19 @@ class BudgetRepository extends ServiceEntityRepository
 
     }
 
+    public function findIncomeByWallet($idWallet)
+    {
+
+        return $this->createQueryBuilder('b')
+            ->where('b.wallet = :wallet')
+            ->andWhere('b.coast = :coast')
+            ->setParameter('wallet', $idWallet)
+            ->setParameter('coast', 0)
+            ->getQuery()
+            ->getResult();
+
+    }
+
     // public function findByWallet(int $page = 1, $idWallet): Paginator
     // {
     //     $firstResult = ($page - 1) * self::ITEMS_PER_PAGE;

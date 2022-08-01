@@ -121,7 +121,7 @@ class WalletTest extends ApiTestCase
 
     }
 
-    public function testGetWalletBudget()
+    public function testGetWalletCoast()
     {
         $wallet = $this->client->request('GET', '/api/wallets/1/budgets/coasts', ['headers' => $this->header]);
         $wallet = json_decode($wallet->getContent(), true);
@@ -149,6 +149,37 @@ class WalletTest extends ApiTestCase
         $this->assertJsonEquals($wallet);
 
     }
+
+    
+    public function testGetWalletIncome()
+    {
+        $wallet = $this->client->request('GET', '/api/wallets/1/budgets/incomes', ['headers' => $this->header]);
+        $wallet = json_decode($wallet->getContent(), true);
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertJsonContains([
+            "@context"=> "/api/contexts/Wallet",
+            "@id"=> "/api/wallets",
+            "@type"=> "hydra:Collection",
+            "hydra:member"=> [
+              [
+                "@id" => "/api/budgets/18",
+                "@type" => "Budget",
+                "id" =>  18,
+                "amount" => "147.58",
+                "dueDate" => [
+                  23,
+                  2
+                ],
+                "coast" => false
+            ]
+            ],
+        ]);
+        
+        $this->assertJsonEquals($wallet);
+
+    }
+
 
     public function testPutSaving() {
         

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Controller;
 
@@ -13,9 +13,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class GetBudgetByWallet extends AbstractController
 {
     public function __invoke(Wallet $data, Request $request, BudgetRepository $budgetRepository)
-    {   
-            
-        return $budgetRepository->findCoastByWallet( $data->getId());
-
+    {
+        if ($request->get('_api_item_operation_name') == 'wallet_budget_coast') {
+            return $budgetRepository->findCoastByWallet($data->getId());
+        } else if ($request->get('_api_item_operation_name') == 'wallet_budget_income') {
+            return $budgetRepository->findIncomeByWallet($data->getId());
+        } else {
+            return 0;
+        }
     }
 }
