@@ -20,19 +20,27 @@ class RegistrationTest extends ApiTestCase
 
     public function testRegistration()
     {
-        $client = $this->registration('test@test.com', 'azerty13');
+        $client = $this->registration('test@test.net', 'azerty13');
+
+        $this->assertResponseIsSuccessful(); 
+        
+        // Test email
+        $this->assertEmailCount(1);
+        $email = $this->getMailerMessage();
+        
+        $this->assertEmailHtmlBodyContains($email, 'Click here to activate your account');
 
         $this->assertResponseStatusCodeSame(201);
 
         $this->assertJsonEquals([
             "@context" => "/api/contexts/User",
-            "@id" => "/api/users/5",
+            "@id" => "/api/users/6",
             "@type" => "User",
-            "id" => 5,
-            "email" => "test@test.com",
+            "id" => 6,
+            "email" => "test@test.net",
             "roles" => [
                 "ROLE_USER"
-            ]
+            ],
         ]);
 
 
@@ -42,10 +50,10 @@ class RegistrationTest extends ApiTestCase
     public function testGetWalletUser() {
         
         // Vérifier si le wallet est créer lors de la registration 
-        $this->registration('test@test.com', 'azerty13');
+        $this->registration('test@test.net', 'azerty13');
 
         // find wallet by User 
-        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'test@test.com']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'test@test.net']);
         $walletUser = static::getContainer()->get('doctrine')->getRepository(Wallet::class)->findOneBy(['owner' => $user]);
         
         // Test si les data du wallet
@@ -67,4 +75,5 @@ class RegistrationTest extends ApiTestCase
 
         return $this->client;
     }
+
 }

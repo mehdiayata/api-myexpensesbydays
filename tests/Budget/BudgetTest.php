@@ -103,7 +103,7 @@ class BudgetTest extends ApiTestCase
             "coast" => true
         ];
 
-        $this->client->request('PUT', '/api/budgets/1', ['headers' => $this->header, 'json' => $json]);
+        $this->client->request('PUT', '/api/budgets/2', ['headers' => $this->header, 'json' => $json]);
 
 
         $this->assertResponseStatusCodeSame(200);
@@ -111,10 +111,10 @@ class BudgetTest extends ApiTestCase
 
         $this->assertJsonEquals([
             '@context' => '/api/contexts/Budget',
-            '@id' => "/api/budgets/1",
+            '@id' => "/api/budgets/2",
             '@type' => 'Budget',
-            'id' => 1,
-            'wallet' => '/api/wallets/2',
+            'id' => 2,
+            'wallet' => '/api/wallets/1',
             "amount" => "150.00",
             "dueDate" => ['1', '2', '3'],
             "coast" => true
@@ -127,12 +127,12 @@ class BudgetTest extends ApiTestCase
     public function testDeleteCoast() {
 
         
-        $this->client->request('DELETE', '/api/budgets/1', ['headers' => $this->header]);
+        $this->client->request('DELETE', '/api/budgets/2', ['headers' => $this->header]);
         
         $this->assertResponseStatusCodeSame(204);
 
         $this->assertNull(
-            static::getContainer()->get('doctrine')->getRepository(Budget::class)->findOneBy(['id' => '1'])
+            static::getContainer()->get('doctrine')->getRepository(Budget::class)->findOneBy(['id' => '2'])
         );
     }
 }

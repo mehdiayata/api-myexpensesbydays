@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use App\Controller\UserPutController;
+use App\Controller\CheckEmailController;
 use App\Doctrine\DataUserOwnedInterface;
 use App\Controller\RegistrationController;
 use Doctrine\Common\Collections\Collection;
@@ -28,7 +29,15 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
             'controller' => RegistrationController::class,
             'read' => true,
             'denormalization_context' => ['groups' => 'User:Registration'],
-           
+        ], 
+        'check_email' => [
+            'pagination_enabled' => false,
+            'path' => '/checkAccount',
+            'method' => 'post',
+            'controller' => CheckEmailController::class,
+            'read' => true,
+            'denormalization_context' => ['groups' => 'User:Check:Email'],
+            
         ]
     ],
     itemOperations: [
@@ -40,11 +49,11 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
         'put' => [
             'openapi_context' => [
                 'security' => [['bearerAuth' => []]]
-            ],
+                ],
             'denormalization_context' => ['groups' => 'put:User'],
             'controller' => UserPutController::class,
             'method' => 'put',
-        ]
+        ],
     ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUserOwnedInterface
@@ -60,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUse
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    #[Groups(['read:User', 'User:Registration'])]
+    #[Groups(['read:User', 'User:Registration', 'User:Check:Email'])]
     private $email;
 
     /**
@@ -80,6 +89,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUse
      * @ORM\OneToMany(targetEntity=Wallet::class, mappedBy="owner", orphanRemoval=true)
      */
     private $wallets;
+
+    /**
+     * @ORM\Column(type="string", unique=true)
+     */
+    #[Groups(['User:Check:Email'])]
+    private $verifyEmail;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isVerified = false;
 
     public function __construct()
     {
@@ -202,6 +222,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUse
                 $wallet->setOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getVerifyEmail()
+    {
+        return $this->verifyEmail;
+    }
+
+    public function setVerifyEmail($verifyEmail): self
+    {
+        $this->verifyEmail = $verifyEmail;
+
+        return $this;
+    }
+
+    public function getIsVerified(): ?bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }

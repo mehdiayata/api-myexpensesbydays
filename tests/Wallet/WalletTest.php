@@ -133,13 +133,13 @@ class WalletTest extends ApiTestCase
             "@type"=> "hydra:Collection",
             "hydra:member"=> [
               [
-                "@id" => "/api/budgets/12",
+                "@id" => "/api/budgets/2",
                 "@type" => "Budget",
-                "id" =>  12,
-                "amount" => "895.96",
+                "id" =>  2,
+                "amount" => "1788.91",
                 "dueDate" => [
-                  3,
-                  6
+                  16,
+                  15
                 ],
                 "coast" => true
             ]
@@ -163,13 +163,13 @@ class WalletTest extends ApiTestCase
             "@type"=> "hydra:Collection",
             "hydra:member"=> [
               [
-                "@id" => "/api/budgets/18",
+                "@id" => "/api/budgets/16",
                 "@type" => "Budget",
-                "id" =>  18,
-                "amount" => "147.58",
+                "id" =>  16,
+                "amount" => "1148.45",
                 "dueDate" => [
-                  23,
-                  2
+                  28,
+                  1
                 ],
                 "coast" => false
             ]
