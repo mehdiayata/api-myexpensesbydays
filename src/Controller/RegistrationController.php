@@ -85,7 +85,7 @@ class RegistrationController extends AbstractController
             ->context([
                 'adressEmail' => $adressEmail,
                 'randomKey' => $randomKey,
-                'url' => 'http://127.0.0.1:3000/#/login?key='.$randomKey.'&email='.$adressEmail
+                'url' => 'http://127.0.0.1:3000/#/checkEmail?key='.$randomKey.'&email='.$adressEmail
             ]);
 
             $this->mailer->send($email);
