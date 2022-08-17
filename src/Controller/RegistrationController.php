@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Wallet;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,23 +18,54 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 #[AsController]
 class RegistrationController extends AbstractController
 {
-    public function __construct(private UserPasswordHasherInterface $passwordHasher, private EntityManagerInterface $em,
-    private MailerInterface $mailer)
-    {
+    public function __construct(
+        private UserPasswordHasherInterface $passwordHasher,
+        private EntityManagerInterface $em,
+        private MailerInterface $mailer,
+        private UserRepository $userRepository
+    ) {
     }
 
-    public function __invoke(User $data, Request $request): User
+    public function __invoke(User $data, Request $request)
     {
-         $randomKey = $this->generateRandomKey();
-        
-        $this->sendEmail('mehdi.ayata@gmail.com', $randomKey);
+        // Si l'email est déjà pris
+        if ($this->checkEmail($data->getEmail())) {
+            $randomKey = $this->generateRandomKey();
 
-        $data->setVerifyEmail($randomKey);
-        $data->setPassword($this->passwordHasher->hashPassword($data, $data->getPassword()));
+            $this->sendEmail($data->getEmail(), $randomKey);
 
-        $newMainWallet = $this->createMainWallet($data);
-        $data->addWallet($newMainWallet);
-         return $data;
+            $data->setVerifyEmail($randomKey);
+            $data->setPassword($this->passwordHasher->hashPassword($data, $data->getPassword()));
+
+            $newMainWallet = $this->createMainWallet($data);
+            $data->addWallet($newMainWallet);
+
+
+            return $data;
+
+        } else {
+
+            return new Response(
+                json_encode([
+                    'message' => 'Your email is already use'
+                ]),
+                Response::HTTP_BAD_REQUEST,
+                ['content-type', 'application/ld+json; charset=utf-8']
+            );
+        }
+    }
+
+    public function checkEmail($email)
+    {
+        $user = $this->userRepository->findBy([
+            'email' => $email
+        ]);
+
+        if ($user == null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // Créer un Wallet principal lors de l'inscription
@@ -71,11 +103,12 @@ class RegistrationController extends AbstractController
         return $randomString;
     }
 
-    public function sendEmail ($adressEmail, $randomKey) 
+    public function sendEmail($adressEmail, $randomKey)
     {
+
         $email = (new TemplatedEmail())
             ->from('contact@ayatadev.com')
-            ->to('mehdi.ayata@gmail.com')
+            ->to($adressEmail)
             //->cc('cc@example.com')
             //->bcc('bcc@example.com')
             //->replyTo('fabien@example.com')
@@ -85,9 +118,9 @@ class RegistrationController extends AbstractController
             ->context([
                 'adressEmail' => $adressEmail,
                 'randomKey' => $randomKey,
-                'url' => 'http://127.0.0.1:3000/#/checkEmail?key='.$randomKey.'&email='.$adressEmail
+                'url' => 'http://127.0.0.1:3000/#/checkEmail?key=' . $randomKey . '&email=' . $adressEmail
             ]);
 
-            $this->mailer->send($email);
+        $this->mailer->send($email);
     }
 }
