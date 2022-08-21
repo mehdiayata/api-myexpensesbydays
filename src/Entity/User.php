@@ -8,8 +8,10 @@ use App\Controller\UserPutController;
 use App\Controller\CheckEmailController;
 use App\Doctrine\DataUserOwnedInterface;
 use App\Controller\RegistrationController;
+use App\Controller\ResetPasswordController;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\ForgotPasswordMailController;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -38,6 +40,24 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
             'read' => true,
             'denormalization_context' => ['groups' => 'User:Check:Email'],
             
+        ],
+        
+        'forgot_password_mail' => [
+            'pagination_enabled' => false,
+            'path' => '/forgotPassword',
+            'method' => 'post',
+            'controller' => ForgotPasswordMailController::class,
+            'read' => true,
+            'denormalization_context' => ['groups' => 'User:Forgot:Email'],
+            
+        ],
+        'reset-password' => [
+            'pagination_enabled' => false,
+            'path' => '/resetPassword',
+            'method' => 'post',
+            'controller' => ResetPasswordController::class,
+            'read' => true,
+            'denormalization_context' => ['groups' => 'User:Reset:Password'],
         ]
     ],
     itemOperations: [
@@ -69,7 +89,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUse
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    #[Groups(['read:User', 'User:Registration', 'User:Check:Email'])]
+    #[Groups(['read:User', 'User:Registration', 'User:Check:Email', 'User:Forgot:Email', 'User:Reset:Password'])]
     private $email;
 
     /**
@@ -82,7 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUse
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
-    #[Groups(['User:Registration', 'put:User'])]
+    #[Groups(['User:Registration', 'put:User', 'User:Reset:Password'])]
     private $password;
 
     /**
@@ -100,6 +120,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUse
      * @ORM\Column(type="boolean")
      */
     private $isVerified = false;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    #[Groups(['User:Reset:Password'])]
+    private $resetPassword;
 
     public function __construct()
     {
@@ -246,6 +272,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUse
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getResetPassword(): ?string
+    {
+        return $this->resetPassword;
+    }
+
+    public function setResetPassword(?string $resetPassword): self
+    {
+        $this->resetPassword = $resetPassword;
 
         return $this;
     }
