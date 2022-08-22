@@ -23,9 +23,9 @@ class UserTest extends ApiTestCase
         $kernel = self::bootKernel();
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
         $this->client = static::createClient();
-        
-        $loginTestClass = new LoginTestClass();   
-        $this->token = $loginTestClass->getToken($this->client); 
+
+        $loginTestClass = new LoginTestClass();
+        $this->token = $loginTestClass->getToken($this->client);
     }
 
 
@@ -107,7 +107,28 @@ class UserTest extends ApiTestCase
         $json = $response->toArray();
         $this->assertResponseIsSuccessful();
         $this->assertArrayHasKey('token', $json);
-
     }
 
+    public function testDeleteUser()
+    {
+
+
+        // Récupère le token (Login)
+        $token = $this->token;
+
+        $header = [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token,
+                'Content-Type' => 'application/json',
+            ]
+        ];
+
+        $this->client->request('DELETE', '/api/users/4', $header);
+
+        $this->assertResponseStatusCodeSame(204);
+
+        $this->assertNull(
+            static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['id' => '4'])
+        );
+    }
 }

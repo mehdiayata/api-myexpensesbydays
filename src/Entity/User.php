@@ -74,6 +74,11 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
             'controller' => UserPutController::class,
             'method' => 'put',
         ],
+        'delete' => [
+            'openapi_context' =>  [
+                'security' => [['bearerAuth' => []]]
+            ],
+        ]
     ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUserOwnedInterface
