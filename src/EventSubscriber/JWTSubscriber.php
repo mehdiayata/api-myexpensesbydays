@@ -19,6 +19,7 @@ class JWTSubscriber implements EventSubscriberInterface
              $data['roles'] = $user->getRoles();
              
              $data['verified'] = $user->getIsVerified();
+             $data['firstUse'] = $user->getFirstUse();
         } 
         
         $event->setData($data);

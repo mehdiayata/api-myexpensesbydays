@@ -15,7 +15,6 @@ use App\Controller\ForgotPasswordMailController;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
@@ -73,6 +72,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
             'denormalization_context' => ['groups' => 'put:User'],
             'controller' => UserPutController::class,
             'method' => 'put',
+            'read' => true
         ],
         'delete' => [
             'openapi_context' =>  [
@@ -131,6 +131,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUse
      */
     #[Groups(['User:Reset:Password'])]
     private $resetPassword;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default" : 1},)
+     */
+    #[Groups(['read:User', 'put:User'])]
+    private $firstUse = true;
 
     public function __construct()
     {
@@ -289,6 +295,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, DataUse
     public function setResetPassword(?string $resetPassword): self
     {
         $this->resetPassword = $resetPassword;
+
+        return $this;
+    }
+
+    public function getFirstUse(): ?bool
+    {
+        return $this->firstUse;
+    }
+
+    public function setFirstUse(bool $firstUse): self
+    {
+        $this->firstUse = $firstUse;
 
         return $this;
     }

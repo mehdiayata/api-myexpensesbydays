@@ -10,16 +10,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
-class UserPutController extends AbstractController 
+class UserPutController extends AbstractController
 {
     public function __construct(private EntityManagerInterface $em, private UserRepository $walletRepository, private UserPasswordHasherInterface $passwordHasher)
     {
-        
     }
     public function __invoke(User $data, Request $request): User
     {
-        $data->setPassword($this->passwordHasher->hashPassword($data, $data->getPassword()));
-
+        if ($request->get('previous_data')->getPassword() != $data->getPassword()) {
+            $data->setPassword($this->passwordHasher->hashPassword($data, $data->getPassword()));
+        }
+        
         return $data;
     }
 }

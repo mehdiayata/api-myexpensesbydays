@@ -41,6 +41,7 @@ class RegistrationTest extends ApiTestCase
             "roles" => [
                 "ROLE_USER"
             ],
+            "firstUse" => true
         ]);
 
 

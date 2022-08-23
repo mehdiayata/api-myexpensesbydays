@@ -25,6 +25,7 @@ class UserTest extends ApiTestCase
         $this->client = static::createClient();
 
         $loginTestClass = new LoginTestClass();
+       
         $this->token = $loginTestClass->getToken($this->client);
     }
 
@@ -50,13 +51,12 @@ class UserTest extends ApiTestCase
             '@context' => '/api/contexts/User',
             '@id' => '/api/users/4',
             '@type' => 'User',
-            'id' => '4',
+            'id' => 4,
             'email' => 'test@test.fr',
-            'roles' => ['0' => 'ROLE_USER']
+            'roles' => ['0' => 'ROLE_USER'],
+            "firstUse" => true
         ]);
     }
-
-
 
 
     public function testPutPassword()
@@ -71,7 +71,7 @@ class UserTest extends ApiTestCase
                 'Content-Type' => 'application/json',
             ],
             'json' => [
-                'password' => 'newPassword'
+                'password' => 'azerty13'
             ]
 
         ];
@@ -88,7 +88,8 @@ class UserTest extends ApiTestCase
             "@type" => "User",
             "id" => 4,
             "email" => "test@test.fr",
-            "roles" => ["ROLE_USER"]
+            "roles" => ["ROLE_USER"],
+            "firstUse" => true
         ]);
         $this->assertMatchesResourceItemJsonSchema(User::class);
 
@@ -98,7 +99,7 @@ class UserTest extends ApiTestCase
             'headers' => ['Content-Type' => 'application/json'],
             'json' => [
                 'username' => 'test@test.fr',
-                'password' => 'newPassword'
+                'password' => 'azerty13'
             ],
         ];
 
@@ -109,9 +110,47 @@ class UserTest extends ApiTestCase
         $this->assertArrayHasKey('token', $json);
     }
 
-    public function testDeleteUser()
+    public function testPutFirstUse()
     {
 
+        // Récupère le token (Login)
+        $token = $this->token;
+
+        $header = [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token,
+                'Content-Type' => 'application/json',
+            ],
+            'json' => [
+                'firstUse' => false
+            ]
+
+        ];
+
+
+        $this->client->request('PUT', '/api/users/4', $header);
+
+        // Test si un update a bien été fait
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+
+        $this->assertJsonEquals([
+            "@context" => "/api/contexts/User",
+            "@id" => "/api/users/4",
+            "@type" => "User",
+            "id" => 4,
+            "email" => "test@test.fr",
+            "roles" => ["ROLE_USER"],
+            "firstUse" => false
+        ]);
+
+        $this->assertMatchesResourceItemJsonSchema(User::class);
+
+    }
+    
+
+    public function testDeleteUser()
+    {
 
         // Récupère le token (Login)
         $token = $this->token;
