@@ -179,6 +179,11 @@ class Wallet implements UserOwnedInterface
     #[Groups(['write:Wallet', 'put:Wallet', 'read:Wallet'])]
     private $savingReal;
 
+    /**
+     * @ORM\Column(type="decimal", precision=10, scale=2, options={"default" : 0})
+     */
+    private $authorizedExpenses = 0;
+
     public function __construct()
     {
         $this->transactions = new ArrayCollection();
@@ -330,6 +335,18 @@ class Wallet implements UserOwnedInterface
     public function setSavingReal(string $savingReal): self
     {
         $this->savingReal = $savingReal;
+
+        return $this;
+    }
+
+    public function getAuthorizedExpenses(): ?string
+    {
+        return $this->authorizedExpenses;
+    }
+
+    public function setAuthorizedExpenses(string $authorizedExpenses): self
+    {
+        $this->authorizedExpenses = $authorizedExpenses;
 
         return $this;
     }
