@@ -31,6 +31,15 @@ App\Entity\Wallet:
         main: 1
         saving: '<randomFloat(2, 50, 500)>'
         saving_real: '0.00'
+
+    wallet_5:
+        amount: '1000'
+        createdAt: <dateTimeBetween('15-12-2021', '17-12-2021')>
+        owner: '@user_6'
+        main: 1
+        saving: '100'
+        saving_real: '0.00'
+
         
 
 

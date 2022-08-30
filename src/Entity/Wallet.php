@@ -182,6 +182,7 @@ class Wallet implements UserOwnedInterface
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2, options={"default" : 0})
      */
+    #[Groups(['read:Wallet'])]
     private $authorizedExpenses = 0;
 
     public function __construct()

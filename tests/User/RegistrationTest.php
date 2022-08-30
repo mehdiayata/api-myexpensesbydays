@@ -34,9 +34,9 @@ class RegistrationTest extends ApiTestCase
 
         $this->assertJsonEquals([
             "@context" => "/api/contexts/User",
-            "@id" => "/api/users/6",
+            "@id" => "/api/users/7",
             "@type" => "User",
-            "id" => 6,
+            "id" => 7,
             "email" => "test@test.net",
             "roles" => [
                 "ROLE_USER"

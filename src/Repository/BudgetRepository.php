@@ -24,7 +24,7 @@ class BudgetRepository extends ServiceEntityRepository
         parent::__construct($registry, Budget::class);
     }
 
-    
+
     public function findCoastByWallet($idWallet)
     {
 
@@ -35,7 +35,6 @@ class BudgetRepository extends ServiceEntityRepository
             ->setParameter('coast', 1)
             ->getQuery()
             ->getResult();
-
     }
 
     public function findIncomeByWallet($idWallet)
@@ -48,7 +47,28 @@ class BudgetRepository extends ServiceEntityRepository
             ->setParameter('coast', 0)
             ->getQuery()
             ->getResult();
+    }
 
+    public function findSumBudgetByWallet($idWallet, $isCoast)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+        SELECT SUM((amount*  (CHAR_LENGTH (budget.due_date) - CHAR_LENGTH (REPLACE(budget.due_date,\',\',\'\')) + 0))) as cnt  
+        FROM budget 
+        WHERE wallet_id = :wallet_id  AND coast = :is_coast
+            ';
+
+
+
+
+
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['wallet_id' => $idWallet, 'is_coast' => $isCoast]);
+
+
+        // returns an array of arrays (i.e. a raw data set)
+        return $resultSet->fetchOne();
     }
 
     // public function findByWallet(int $page = 1, $idWallet): Paginator

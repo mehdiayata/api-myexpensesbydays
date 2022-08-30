@@ -15,3 +15,10 @@ App\Entity\User:
         verify_email: '11111'
         is_verified: true
         reset_password: '00000'
+
+    user_6:
+        email: 'testAE@test.fr'
+        password: '<symfonyPassword("Symfony\Component\Security\Core\User\User", "azerty13", "salt")>'
+        verify_email: '22222'
+        is_verified: true
+        reset_password: '00000'
