@@ -1,8 +1,25 @@
 App\Entity\Budget:
-    budget{1..40}:
-        amount: '<randomFloat(2, 0, 2000)>'
-        wallet: '@wallet_*'
-        dueDate: ['<numberBetween(1, 28)>', '<numberBetween(1, 28)>', '<numberBetween(1, 28)>']
-        coast: '<numberBetween(0, 1)>'
+    budget_1:
+        amount: '500'
+        wallet: '@wallet_1'
+        dueDate: ['2', '5', '7']
+        coast: '0'
         
-  
+    budget_2:
+        amount: '100'
+        wallet: '@wallet_1'
+        dueDate: ['12', '15', '17']
+        coast: '0'
+
+    budget_3:
+        amount: '200'
+        wallet: '@wallet_1'
+        dueDate: ['10', '18']
+        coast: '1'
+        
+    budget_4:
+        amount: '100'
+        wallet: '@wallet_1'
+        dueDate: ['20']
+        coast: '1'
+        

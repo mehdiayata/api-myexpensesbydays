@@ -20,13 +20,13 @@ class LoginTestClass extends ApiTestCase
     }
 
 
-    public function getToken($client)
+    public function getToken($client, $username, $password)
     {
         $response = $client->request('POST', '/api/login', [
             'headers' => ['Content-Type' => 'application/json'],
             'json' => [
-                'username' => 'test@test.fr',
-                'password' => 'azerty13'
+                'username' => $username,
+                'password' => $password
             ],
         ]);
 

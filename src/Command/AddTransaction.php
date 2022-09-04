@@ -11,7 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class AddTransaction extends Command
 {
     protected static $defaultName = 'app:cron:addTransaction';
-    private $transactionRepository;
 
     public function __construct(TransactionRepository $transactionRepository)
     {

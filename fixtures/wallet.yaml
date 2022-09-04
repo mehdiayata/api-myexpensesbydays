@@ -1,45 +1,19 @@
 App\Entity\Wallet:
-    wallet_{1..2}:
-        amount: '<randomFloat(2, 10000, 1000000)>'
-        createdAt: <dateTimeBetween('15-12-2021', '17-12-2021')>
-        owner: '@user_4'
-        main: 0
-        saving: '<randomFloat(2, 50, 500)>'
-        saving_real: '0.00'
-    
     wallet_1:
-        amount: '<randomFloat(2, 10000, 1000000)>'
-        createdAt: <dateTimeBetween('15-12-2021', '17-12-2021')>
-        owner: '@user_4'
+        amount: '1000'
+        createdAt: <(new \DateTime('2022-09-03'))>
+        owner: '@user_1'
         main: 1
-        saving: '<randomFloat(2, 50, 500)>'
+        saving: '0.00'
         saving_real: '0.00'
-    
 
-    wallet_{3..5}:
-        amount: '<randomFloat(2, 10000, 1000000)>'
-        createdAt: <dateTimeBetween('15-12-2021', '17-12-2021')>
+    wallet_2:
+        amount: '2000'
+        createdAt: <(new \DateTime('2022-09-03'))>
         owner: '@user_1'
         main: 0
-        saving: '<randomFloat(2, 50, 500)>'
+        saving: '0.00'
         saving_real: '0.00'
-    
-    wallet_3:
-        amount: '<randomFloat(2, 10000, 1000000)>'
-        createdAt: <dateTimeBetween('15-12-2021', '17-12-2021')>
-        owner: '@user_1'
-        main: 1
-        saving: '<randomFloat(2, 50, 500)>'
-        saving_real: '0.00'
-
-    wallet_5:
-        amount: '1000'
-        createdAt: <dateTimeBetween('15-12-2021', '17-12-2021')>
-        owner: '@user_6'
-        main: 1
-        saving: '100'
-        saving_real: '0.00'
-
         
 
 

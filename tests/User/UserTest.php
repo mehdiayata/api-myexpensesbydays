@@ -11,72 +11,54 @@ class UserTest extends ApiTestCase
 {
     use RefreshDatabaseTrait;
 
-    /**
-     * @var \Doctrine\ORM\EntityManager
-     */
-    private $entityManager;
     private $client;
-    private $token;
+    private $header;
 
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
-        $this->client = static::createClient();
 
         $loginTestClass = new LoginTestClass();
-       
-        $this->token = $loginTestClass->getToken($this->client);
-    }
 
+        $token = $loginTestClass->getToken(static::createClient(), 'test@test.fr', 'azerty13');
 
-    public function testGetUser()
-    {
-        // Récupère le token 
-        $token = $this->token;
-
-        $header = [
+        $this->header = [
             'headers' => [
                 'Authorization' => 'Bearer ' . $token,
                 'Content-Type' => 'application/json',
             ],
         ];
+    }
 
-        $test = $this->client->request('GET', '/api/users/4', $header);
+
+    public function testGetUser()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/api/users/1', $this->header);
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         $this->assertJsonEquals([
             '@context' => '/api/contexts/User',
-            '@id' => '/api/users/4',
+            '@id' => '/api/users/1',
             '@type' => 'User',
-            'id' => 4,
+            'id' => 1,
             'email' => 'test@test.fr',
             'roles' => ['0' => 'ROLE_USER'],
             "firstUse" => true
         ]);
     }
-
+    
 
     public function testPutPassword()
     {
+        $client = static::createClient();
+       
+        $this->header['json'] = ["password" => "newPassword13"];
 
-        // Récupère le token (Login)
-        $token = $this->token;
-
-        $header = [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token,
-                'Content-Type' => 'application/json',
-            ],
-            'json' => [
-                'password' => 'azerty13'
-            ]
-
-        ];
-
-        $this->client->request('PUT', '/api/users/4', $header);
+        $client->request('PUT', '/api/users/1', $this->header);
 
         // Test si un update a bien été fait
         $this->assertResponseStatusCodeSame(200);
@@ -84,90 +66,69 @@ class UserTest extends ApiTestCase
 
         $this->assertJsonEquals([
             "@context" => "/api/contexts/User",
-            "@id" => "/api/users/4",
+            "@id" => "/api/users/1",
             "@type" => "User",
-            "id" => 4,
+            "id" => 1,
             "email" => "test@test.fr",
             "roles" => ["ROLE_USER"],
             "firstUse" => true
         ]);
+
         $this->assertMatchesResourceItemJsonSchema(User::class);
 
-
-        // Test si l'on peut se connecté avec le nouveau mot de passe
+        // Login avec nouveau mot de passe 
         $header = [
-            'headers' => ['Content-Type' => 'application/json'],
             'json' => [
                 'username' => 'test@test.fr',
-                'password' => 'azerty13'
+                'password' => 'newPassword13'
             ],
         ];
+        
+        $client->disableReboot();
 
-        $response = $this->client->request('POST', '/api/login', $header);
-
+        $response = $client->request('POST', '/api/login', $header);
+        
         $json = $response->toArray();
         $this->assertResponseIsSuccessful();
         $this->assertArrayHasKey('token', $json);
     }
 
+
     public function testPutFirstUse()
     {
-
-        // Récupère le token (Login)
-        $token = $this->token;
-
-        $header = [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token,
-                'Content-Type' => 'application/json',
-            ],
-            'json' => [
-                'firstUse' => false
-            ]
-
-        ];
+        $client = static::createClient();
+        $this->header['json'] = ['firstUse' => false];
 
 
-        $this->client->request('PUT', '/api/users/4', $header);
+        $client->request('PUT', '/api/users/1', $this->header);
 
-        // Test si un update a bien été fait
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
 
         $this->assertJsonEquals([
             "@context" => "/api/contexts/User",
-            "@id" => "/api/users/4",
+            "@id" => "/api/users/1",
             "@type" => "User",
-            "id" => 4,
+            "id" => 1,
             "email" => "test@test.fr",
             "roles" => ["ROLE_USER"],
             "firstUse" => false
         ]);
 
         $this->assertMatchesResourceItemJsonSchema(User::class);
-
     }
-    
+
 
     public function testDeleteUser()
     {
 
-        // Récupère le token (Login)
-        $token = $this->token;
-
-        $header = [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token,
-                'Content-Type' => 'application/json',
-            ]
-        ];
-
-        $this->client->request('DELETE', '/api/users/4', $header);
+        $client = static::createClient();
+        $client->request('DELETE', '/api/users/1', $this->header);
 
         $this->assertResponseStatusCodeSame(204);
 
         $this->assertNull(
-            static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['id' => '4'])
+            static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['id' => '1'])
         );
     }
 }

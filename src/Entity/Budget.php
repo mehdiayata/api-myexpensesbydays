@@ -5,6 +5,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\BudgetRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\BudgetDeleteController;
+use App\Controller\WalletDeleteController;
 use App\Doctrine\Transaction\TransactionUserOwnedInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -30,7 +32,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'delete' => [
             'openapi_context' =>  [
                 'security' => [['bearerAuth' => []]]
-            ]
+            ],
+            'pagination_enabled' => false,
+            'path' => '/budgets/{id}',
+            'method' => 'delete',
+            'controller' => BudgetDeleteController::class,
+            'read' => true
         ],
     ]
 )]

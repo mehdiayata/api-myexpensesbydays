@@ -2,21 +2,22 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\Budget;
+use App\Entity\Wallet;
 use App\Entity\Transaction;
 use App\Service\CalculService;
 use App\Repository\BudgetRepository;
 use App\Repository\WalletRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\TransactionRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\Budget;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Security\Core\Security;
 
-final class AddSavingRealSubscriber implements EventSubscriberInterface
+final class WalletSavingSubscriber implements EventSubscriberInterface
 {
     private $user;
 
@@ -45,38 +46,33 @@ final class AddSavingRealSubscriber implements EventSubscriberInterface
         $method = $event->getRequest()->getMethod();
        
         // Si ce n'est pas un transaction et si ce n'est pas une méthode post ne fait rien
-        if (!$eventEntity instanceof Transaction || Request::METHOD_GET == $method) {
-            if (!$eventEntity instanceof Budget) {
+        if (!$eventEntity instanceof Wallet || Request::METHOD_GET == $method) {
                 return;
-            }
         } 
-
-        $wallet = $eventEntity->getWallet();
-        
         
         // POST
-        if ($eventEntity instanceof Transaction && Request::METHOD_POST == $method) {
-         
-            $newSavingReal = $this->calculService->calculNewSavingRealPost($wallet->getSavingReal(), $eventEntity->getAmount());
-           
-            $wallet->setSavingReal($newSavingReal);
-            
+        if ($eventEntity instanceof Wallet && Request::METHOD_POST == $method) {
+            return;
         }
 
         // Put
-        if ($eventEntity instanceof Transaction && Request::METHOD_PUT == $method) {
+        if ($eventEntity instanceof Wallet && Request::METHOD_PUT == $method) {
             // OldData
-            $oldTransaction = $event->getRequest()->get('previous_data');
+            $oldWallet = $event->getRequest()->get('previous_data');
 
-            $newSavingReal = $this->calculService->calculNewSavingRealPut($wallet->getSavingReal(), $oldTransaction->getAmount(), $eventEntity->getAmount());
-            $wallet->setSavingReal($newSavingReal);
+            if($oldWallet->getSaving() != $eventEntity->getSaving()) {
+                
+                
+                $authorizedExpenses = $this->calculAuthorizedExpenses($eventEntity);
+
+                $eventEntity->setAuthorizedExpenses($authorizedExpenses);
+
+                $this->em->flush();
+            } else {
+                return;
+            }
+
         } 
-
-        $authorizedExpenses = $this->calculAuthorizedExpenses($wallet);
-        
-        $wallet->setAuthorizedExpenses($authorizedExpenses);
-        
-        $this->em->flush();
     }
 
 
@@ -84,8 +80,10 @@ final class AddSavingRealSubscriber implements EventSubscriberInterface
 
     public function calculAuthorizedExpenses($wallet)
     {
+        
         $sumAmountCoast = $this->budgetRepository->findSumBudgetByWallet($wallet->getId(), 1);
         $sumAmountIncome = $this->budgetRepository->findSumBudgetByWallet($wallet->getId(), 0);
+    
 
         return $this->calculService->calculAuthorizedExpenses($sumAmountIncome, $sumAmountCoast, $wallet->getSaving(), $wallet->getSavingReal());
     }

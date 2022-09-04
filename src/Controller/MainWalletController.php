@@ -18,7 +18,6 @@ class MainWalletController extends AbstractController
 
     public function __invoke(Wallet $data, Request $request): Wallet
     {
-
         $this->editOldMainWallet();
         $data->setMain(true);
 

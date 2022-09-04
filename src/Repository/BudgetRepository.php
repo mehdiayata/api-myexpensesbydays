@@ -54,19 +54,14 @@ class BudgetRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = '
-        SELECT SUM((amount*  (CHAR_LENGTH (budget.due_date) - CHAR_LENGTH (REPLACE(budget.due_date,\',\',\'\')) + 0))) as cnt  
+        SELECT SUM(amount * (length(budget.due_date) - length(replace(budget.due_date, \',\', \'\')) + 1)) 
         FROM budget 
         WHERE wallet_id = :wallet_id  AND coast = :is_coast
             ';
 
-
-
-
-
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery(['wallet_id' => $idWallet, 'is_coast' => $isCoast]);
-
-
+        
         // returns an array of arrays (i.e. a raw data set)
         return $resultSet->fetchOne();
     }

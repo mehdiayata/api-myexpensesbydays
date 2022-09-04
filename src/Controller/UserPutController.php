@@ -18,7 +18,9 @@ class UserPutController extends AbstractController
     public function __invoke(User $data, Request $request): User
     {
         if ($request->get('previous_data')->getPassword() != $data->getPassword()) {
+            
             $data->setPassword($this->passwordHasher->hashPassword($data, $data->getPassword()));
+            
         }
         
         return $data;
