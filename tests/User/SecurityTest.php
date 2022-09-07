@@ -57,7 +57,7 @@ class SecurityTest extends ApiTestCase
 
         $json = [
             'json' => [
-                'email' => 'test2@test.fr',
+                'email' => 'cosecav198@laluxy.com',
                 'password' =>  'azerty13'
             ]
         ];
