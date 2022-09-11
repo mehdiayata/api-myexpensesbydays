@@ -105,7 +105,6 @@ class RegistrationController extends AbstractController
 
     public function sendEmail($adressEmail, $randomKey)
     {
-
         $email = (new TemplatedEmail())
             ->from('contact@ayatadev.com')
             ->to($adressEmail)
@@ -118,7 +117,7 @@ class RegistrationController extends AbstractController
             ->context([
                 'adressEmail' => $adressEmail,
                 'randomKey' => $randomKey,
-                'url' => 'http://127.0.0.1:3000/#/checkEmail?key=' . $randomKey . '&email=' . $adressEmail
+                'url' => $this->getParameter('mail.url').'/#/checkEmail?key=' . $randomKey . '&email=' . $adressEmail
             ]);
 
         $this->mailer->send($email);

@@ -1,0 +1,32 @@
+{% apply inline_css %}
+    <style>
+        {# here, define your CSS styles as usual #}
+        h3 {
+            color: #333;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            justify-content: center;
+        }
+
+        
+    </style>
+
+<h3><img class="logo" src="{{ email.image('@images/logo.png') }}" alt="Logo">  Welcome in myExpensesBydays</h3>
+
+<p>
+	Thank's you four registration.
+		Start managing your budget today !
+</p>
+<p>
+	Before you start managing your budget, please validate your account.
+</p>
+
+<p>
+	<a href={{url}}>Click here to activate your account</a>
+</p>
+
+
+{% endapply %}

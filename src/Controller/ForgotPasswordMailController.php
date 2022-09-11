@@ -94,7 +94,7 @@ class ForgotPasswordMailController extends AbstractController
             ->context([
                 'adressEmail' => $adressEmail,
                 'randomKey' => $randomKey,
-                'url' => 'http://127.0.0.1:3000/#/resetPassword?key=' . $randomKey . '&email=' . $adressEmail
+                'url' => $this->getParameter('mail.url').'/#/resetPassword?key=' . $randomKey . '&email=' . $adressEmail
             ]);
 
         $this->mailer->send($email);
